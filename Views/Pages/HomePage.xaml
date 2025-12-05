@@ -12,10 +12,13 @@
         <!--Navigation View-->
         <NavigationView x:Name="nvSample8" Grid.Row="1" Height="Auto"
                         PaneDisplayMode="Left"
+                        OpenPaneLength="250"
                         IsTabStop="False"
                         Background="#E5F1FF"
                         IsSettingsVisible="False"
+                        IsBackButtonVisible="Collapsed"
                         SelectionChanged="NavigationView_SelectionChanged8">
+            
             <NavigationView.MenuItems>
                 <!--Dashboard section-->
                 <NavigationViewItem Content="Dashboard" Icon="Home" FontWeight="SemiBold" ToolTipService.ToolTip="Dashboard" Tag="Dashboard"/>

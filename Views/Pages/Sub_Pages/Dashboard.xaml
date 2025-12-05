@@ -6,20 +6,115 @@
     xmlns:local="using:Toyo_cable_UI.Views.Pages.Sub_Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ScottPlot="using:ScottPlot.WinUI"
     mc:Ignorable="d">
 
-    <Grid RequestedTheme="Light">
-        <!--Define 2 rows-->
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        
-        <!--Row 01-->
-        <Grid Grid.Row="0">
-            <TextBlock Text="Dashboard"
-                       FontSize="20"
-                       FontWeight="Bold"/>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <Grid RequestedTheme="Light">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Header Row -->
+            <Grid Grid.Row="0" Margin="20,10">
+                <TextBlock Text="Dashboard"
+                           FontSize="25"
+                           FontWeight="Bold" />
+            </Grid>
+
+            <!-- Content Row -->
+            <Grid Grid.Row="1" Margin="20,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Row 01: Three Equal Width Cards -->
+                <Grid Grid.Row="0" Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Card 1 -->
+                    <Border Grid.Column="0" 
+                            Background="#E3F2FD" 
+                            CornerRadius="8"
+                            Padding="20"
+                            Margin="0,0,10,0">
+                        <StackPanel Spacing="10" VerticalAlignment="Center">
+                            <TextBlock Text="Total Orders"
+                                       FontSize="14"
+                                       Foreground="#666666"/>
+                            <TextBlock Text="1,234"
+                                       FontSize="32"
+                                       FontWeight="Bold"
+                                       Foreground="#1976D2"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Card 2 -->
+                    <Border Grid.Column="1" 
+                            Background="#E8F5E9" 
+                            CornerRadius="8"
+                            Padding="20"
+                            Margin="5,0">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Revenue"
+                                       FontSize="14"
+                                       Foreground="#666666"/>
+                            <TextBlock Text="$45,678"
+                                       FontSize="32"
+                                       FontWeight="Bold"
+                                       Foreground="#388E3C"/>
+                            <TextBlock Text="↑ 8% from last month"
+                                       FontSize="12"
+                                       Foreground="#4CAF50"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Card 3 -->
+                    <Border Grid.Column="2" 
+                            Background="#FFF3E0" 
+                            CornerRadius="8"
+                            Padding="20"
+                            Margin="10,0,0,0">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Pending Orders"
+                                       FontSize="14"
+                                       Foreground="#666666"/>
+                            <TextBlock Text="87"
+                                       FontSize="32"
+                                       FontWeight="Bold"
+                                       Foreground="#F57C00"/>
+                            <TextBlock Text="↓ 3% from last month"
+                                       FontSize="12"
+                                       Foreground="#F44336"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Row 02: Charts -->
+                <Grid Grid.Row="1" Margin="0,0,0,20">
+                    <!--2 Column Definition-->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0">
+                        <ScottPlot:WinUIPlot x:Name="MyPlotControl" Height="350" />
+                    </Grid>
+                </Grid>
+
+                <!-- Row 03: Your content here -->
+                <Grid Grid.Row="2">
+                    <!-- Add your third row content -->
+                </Grid>
+            </Grid>
         </Grid>
-    </Grid>
+    </ScrollViewer>
 </Page>
