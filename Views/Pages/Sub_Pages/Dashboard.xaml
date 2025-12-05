@@ -32,7 +32,6 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <!--  Row 01: Three Equal Width Cards  -->
                 <!--  Row 01: Four Equal Width Cards  -->
                 <Grid Grid.Row="0" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
