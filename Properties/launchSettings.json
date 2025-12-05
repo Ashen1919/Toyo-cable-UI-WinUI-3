@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Toyo-cable-UI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Toyo-cable-UI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

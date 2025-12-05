@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Toyo_cable_UI.Views.Pages.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Toyo_cable_UI.Views.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid RequestedTheme="Light">
+        <!--Navigation View-->
+        <NavigationView x:Name="nvSample8" Grid.Row="1" Height="Auto"
+                        PaneDisplayMode="Left"
+                        IsTabStop="False"
+                        Background="#E5F1FF"
+                        IsSettingsVisible="False"
+                        SelectionChanged="NavigationView_SelectionChanged8">
+            <NavigationView.MenuItems>
+                <!--Dashboard section-->
+                <NavigationViewItem Content="Dashboard" Icon="Home" FontWeight="SemiBold" ToolTipService.ToolTip="Dashboard" Tag="Dashboard"/>
+
+                <!--Order section-->
+                <NavigationViewItem Content="Order" ToolTipService.ToolTip="Order" FontWeight="SemiBold" Tag="OrderPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7BF;" />
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="View Order" Icon="View" FontWeight="SemiBold" ToolTipService.ToolTip="View Order" Tag="viewOrderPage"/>
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
+
+                <!--Product Section-->
+                <NavigationViewItem Content="Products" ToolTipService.ToolTip="Products" FontWeight="SemiBold" Tag="ProductPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xF156;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <!--Category Section-->
+                <NavigationViewItem Content="Categories" ToolTipService.ToolTip="Category" FontWeight="SemiBold" Tag="CategoryPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE74C;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <!--Report section-->
+                <NavigationViewItem Content="Reports" ToolTipService.ToolTip="Reports" FontWeight="SemiBold" SelectsOnInvoked="False">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE9F9;" />
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Daily Sales Report" 
+                                Icon="CalendarDay" 
+                                FontWeight="SemiBold"
+                                ToolTipService.ToolTip="Daily Sales Report" 
+                                Tag="DailyReportPage"/>
+                        <NavigationViewItem Content="Monthly Sales Report" 
+                                Icon="Calendar"
+                                FontWeight="SemiBold"
+                                ToolTipService.ToolTip="Monthly Sales Report" 
+                                Tag="MonthlyReportPage"/>
+                        <NavigationViewItem Content="Low Stock Report"
+                                ToolTipService.ToolTip="Low Stock Report" 
+                                FontWeight="SemiBold"
+                                Tag="LowStockReportPage">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xE7BA;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
+                
+            </NavigationView.MenuItems>
+            
+            <!--Logout in footer-->
+            <NavigationView.PaneFooter>
+                <Button 
+                    Style="{StaticResource SubtleButtonStyle}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"
+                    Margin="0,0,0,10"
+                    Click="LogoutButton_Click">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal" Padding="3" Spacing="10">
+                            <FontIcon Glyph="&#xF3B1;" />
+                            <TextBlock Text="Logout" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </NavigationView.PaneFooter>
+            <Frame x:Name="contentFrame8" />
+            
+        </NavigationView>
+    </Grid>
+</Page>
