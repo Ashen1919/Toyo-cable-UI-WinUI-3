@@ -1,7 +1,5 @@
 using Microsoft.UI.Xaml.Controls;
 using ScottPlot;
-using System;
-using System.Collections.Generic;
 
 namespace Toyo_cable_UI.Views.Pages.Sub_Pages;
 
@@ -33,6 +31,12 @@ public sealed partial class Dashboard : Page
         new(10, "Nov"),
         new(11, "Dec"),
             });
+
+        //disable on-scroll zoom-in and zoom-out
+        MyPlotControl.UserInputProcessor.IsEnabled = false;
+
+        // set title
+        MyPlotControl.Plot.Title("Sales Performance");
 
         MyPlotControl.Refresh();
 
