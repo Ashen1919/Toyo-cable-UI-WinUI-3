@@ -1,25 +1,287 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="Toyo_cable_UI.Views.Pages.Sub_Pages.viewOrderPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Toyo_cable_UI.Views.Pages.Sub_Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Toyo_cable_UI.Views.Pages.Sub_Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <Grid RequestedTheme="Light">
-        <!--Define 2 rows-->
+
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!--Row 01-->
-        <Grid Grid.Row="0">
-            <TextBlock Text="View Orders"
-                   FontSize="20"
-                   FontWeight="Bold"/>
+        <!--  Header Row  -->
+        <Grid Grid.Row="0" Margin="20,10">
+            <TextBlock
+                FontSize="25"
+                FontWeight="Bold"
+                Text="View Orders" />
+        </Grid>
+
+        <!--  Filter & Search Section  -->
+        <Grid Grid.Row="1" Margin="20,0,20,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <!--  Search Box  -->
+                <TextBox
+                    Grid.Column="0"
+                    Width="350"
+                    Height="60"
+                    Margin="0,0,15,0"
+                    HorizontalAlignment="Left"
+                    PlaceholderText="Search orders...">
+                    <TextBox.Header>
+                        <TextBlock
+                            FontSize="12"
+                            FontWeight="SemiBold"
+                            Text="Search" />
+                    </TextBox.Header>
+                </TextBox>
+            </Grid>
+
+            <!--  Filter Section  -->
+            <Grid Grid.Column="1" HorizontalAlignment="Right">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <!--  Start Date  -->
+                    <DatePicker
+                        Grid.Column="1"
+                        Height="60"
+                        Margin="0,0,15,0">
+                        <DatePicker.Header>
+                            <TextBlock
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="Start Date" />
+                        </DatePicker.Header>
+                    </DatePicker>
+                </Grid>
+
+                <Grid Grid.Column="1">
+                    <!--  End Date  -->
+                    <DatePicker
+                        Grid.Column="1"
+                        Height="60"
+                        Margin="0,0,15,0">
+                        <DatePicker.Header>
+                            <TextBlock
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="End Date" />
+                        </DatePicker.Header>
+                    </DatePicker>
+                </Grid>
+
+                <Grid Grid.Column="2">
+                    <!--  Filter Button  -->
+                    <Button
+                        Grid.Column="3"
+                        Width="100"
+                        Height="40"
+                        Content="Filter"
+                        CornerRadius="5"
+                        Foreground="White"
+                        Style="{ThemeResource AccentButtonStyle}" />
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <!--  Table Content  -->
+        <Grid Grid.Row="2" Margin="20,0,20,20">
+            <Border
+                Background="White"
+                BorderBrush="#E0E0E0"
+                BorderThickness="1"
+                CornerRadius="12">
+                <Border.Shadow>
+                    <ThemeShadow />
+                </Border.Shadow>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <!--  Table Header  -->
+                    <Border
+                        Grid.Row="0"
+                        Padding="20,16"
+                        Background="#F8F9FA"
+                        BorderBrush="#E0E0E0"
+                        BorderThickness="0,0,0,1"
+                        CornerRadius="12,12,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Column="0"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="#1A1A1A"
+                                Text="Order ID" />
+                            <TextBlock
+                                Grid.Column="1"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="#1A1A1A"
+                                Text="Customer Name" />
+                            <TextBlock
+                                Grid.Column="2"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="#1A1A1A"
+                                Text="Order Date" />
+                            <TextBlock
+                                Grid.Column="3"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="#1A1A1A"
+                                Text="Sub Total" />
+                            <TextBlock
+                                Grid.Column="4"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="#1A1A1A"
+                                Text="Discount" />
+                            <TextBlock
+                                Grid.Column="5"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="#1A1A1A"
+                                Text="Total Amount" />
+                            <TextBlock
+                                Grid.Column="6"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="#1A1A1A"
+                                Text="Status" />
+                            <TextBlock
+                                Grid.Column="7"
+                                HorizontalAlignment="Center"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="#1A1A1A"
+                                Text="Action" />
+                        </Grid>
+                    </Border>
+
+                    <!--  Table Rows  -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <!--  Sample Row 1  -->
+                            <Border
+                                Padding="20,16"
+                                BorderBrush="#F0F0F0"
+                                BorderThickness="0,0,0,1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        VerticalAlignment="Center"
+                                        FontSize="13"
+                                        FontWeight="Medium"
+                                        Foreground="#0078D4"
+                                        Text="#ORD001" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        FontSize="13"
+                                        Foreground="#1A1A1A"
+                                        Text="John Doe" />
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center"
+                                        FontSize="13"
+                                        Foreground="#1A1A1A"
+                                        Text="2025-12-02" />
+                                    <TextBlock
+                                        Grid.Column="3"
+                                        VerticalAlignment="Center"
+                                        FontSize="13"
+                                        Foreground="#666666"
+                                        Text="Rs. 3250.00" />
+                                    <TextBlock
+                                        Grid.Column="4"
+                                        VerticalAlignment="Center"
+                                        FontSize="13"
+                                        FontWeight="Medium"
+                                        Foreground="#666666"
+                                        Text="Rs. 100.00" />
+                                    <TextBlock
+                                        Grid.Column="5"
+                                        VerticalAlignment="Center"
+                                        FontSize="13"
+                                        FontWeight="Medium"
+                                        Foreground="#1A1A1A"
+                                        Text="Rs. 3450.00" />
+                                    <Border
+                                        Grid.Column="6"
+                                        Padding="12,6"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Background="#E7F5E9"
+                                        CornerRadius="6">
+                                        <TextBlock
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Foreground="#2E7D32"
+                                            Text="Completed" />
+                                    </Border>
+                                    <Button
+                                        Grid.Column="7"
+                                        Width="80"
+                                        Height="36"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        BorderThickness="0"
+                                        Content="View"
+                                        CornerRadius="6"
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Foreground="White"
+                                        Style="{ThemeResource AccentButtonStyle}" />
+                                </Grid>
+                            </Border>
+
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
         </Grid>
     </Grid>
 </Page>

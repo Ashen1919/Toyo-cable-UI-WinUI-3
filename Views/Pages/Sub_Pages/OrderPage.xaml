@@ -37,7 +37,7 @@
                 </Grid>
 
                 <Grid Grid.Column="1" HorizontalAlignment="Right">
-                    <TextBox Width="250" PlaceholderText="Search Product Here" />
+                    <TextBox Width="280" PlaceholderText="Search Product Here" />
                 </Grid>
             </Grid>
 
@@ -517,6 +517,9 @@
                                 HorizontalAlignment="Right"
                                 Background="{ThemeResource SystemFillColorCriticalBrush}"
                                 CornerRadius="14">
+                                <Button.Resources>
+                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#FF0000" />
+                                </Button.Resources>
                                 <FontIcon
                                     FontSize="11"
                                     Foreground="White"
@@ -608,6 +611,9 @@
                                 HorizontalAlignment="Right"
                                 Background="{ThemeResource SystemFillColorCriticalBrush}"
                                 CornerRadius="14">
+                                <Button.Resources>
+                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#FF0000" />
+                                </Button.Resources>
                                 <FontIcon
                                     FontSize="11"
                                     Foreground="White"
