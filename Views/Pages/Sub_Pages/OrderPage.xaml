@@ -682,7 +682,7 @@
                     CornerRadius="8"
                     FontWeight="Bold"
                     Style="{ThemeResource AccentButtonStyle}">
-                    <TextBlock FontSize="17" Text="Continue" />
+                    <TextBlock FontSize="17" Text="Place Order" />
                 </Button>
             </StackPanel>
         </Grid>

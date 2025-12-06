@@ -1,25 +1,154 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="Toyo_cable_UI.Views.Pages.Sub_Pages.CategoryPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Toyo_cable_UI.Views.Pages.Sub_Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Toyo_cable_UI.Views.Pages.Sub_Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <Grid RequestedTheme="Light">
-        <!--Define 2 rows-->
+        <!--  Define 2 rows  -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!--Row 01-->
-        <Grid Grid.Row="0">
-            <TextBlock Text="Categories"
-                   FontSize="20"
-                   FontWeight="Bold"/>
+        <!--  Header section  -->
+        <Grid Grid.Row="0" Margin="20,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <TextBlock
+                    FontSize="25"
+                    FontWeight="Bold"
+                    Text="Categories" />
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <TextBox
+                    Width="350"
+                    HorizontalAlignment="Left"
+                    PlaceholderText="Search Category here" />
+                <!--  Add category button  -->
+                <Button
+                    HorizontalAlignment="Right"
+                    Click="AddCategoryButton_Click"
+                    Style="{StaticResource AccentButtonStyle}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <SymbolIcon Margin="0,0,5,0" Symbol="Add" />
+                            <TextBlock Text="Add Category" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="20,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!--  DataGrid Container  -->
+            <Border
+                Grid.Row="1"
+                Padding="1"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!--  Table Header  -->
+                        <Grid
+                            Grid.Row="0"
+                            Padding="16,12"
+                            Background="#F8F9FA"
+                            BorderBrush="#E0E0E0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="Category ID" />
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="Category Name" />
+                            <TextBlock
+                                Grid.Column="6"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="Actions" />
+                        </Grid>
+
+                        <!--  Row 1  -->
+                        <Border
+                            Grid.Row="1"
+                            Padding="16,12"
+                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                            BorderThickness="0,0,0,1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    Text="CG001" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    FontWeight="Medium"
+                                    Text="Accelator Cable" />
+                                <StackPanel
+                                    Grid.Column="6"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal"
+                                    Spacing="8">
+                                    <Button
+                                        Padding="12,6"
+                                        Content="Edit"
+                                        FontSize="12"
+                                        Style="{StaticResource AccentButtonStyle}" />
+                                    <Button
+                                        Padding="12,6"
+                                        Content="Delete"
+                                        FontSize="12">
+                                        <Button.Resources>
+                                            <SolidColorBrush x:Key="ButtonBackground" Color="#D13438" />
+                                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#A42327" />
+                                            <SolidColorBrush x:Key="ButtonForeground" Color="White" />
+                                            <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
+                                        </Button.Resources>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </ScrollViewer>
+            </Border>
         </Grid>
     </Grid>
 </Page>
