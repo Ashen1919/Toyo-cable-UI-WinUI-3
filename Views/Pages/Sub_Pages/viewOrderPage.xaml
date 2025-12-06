@@ -17,15 +17,32 @@
         </Grid.RowDefinitions>
 
         <!--  Header Row  -->
-        <Grid Grid.Row="0" Margin="20,10">
-            <TextBlock
-                FontSize="25"
-                FontWeight="Bold"
-                Text="View Orders" />
+        <Grid
+            Grid.Row="0"
+            Padding="30,20"
+            Background="White"
+            CornerRadius="0,0,12,12">
+            <StackPanel>
+                <TextBlock
+                    FontSize="28"
+                    FontWeight="Bold"
+                    Foreground="#1A1A2E"
+                    Text="View Orders" />
+                <TextBlock
+                    Margin="0,4,0,0"
+                    FontSize="14"
+                    Foreground="#6B7280"
+                    Text="Complete Order History Overview" />
+            </StackPanel>
         </Grid>
 
         <!--  Filter & Search Section  -->
-        <Grid Grid.Row="1" Margin="20,0,20,10">
+        <Grid
+            Grid.Row="1"
+            Margin="0,20"
+            Padding="30,20"
+            Background="White"
+            CornerRadius="0,0,12,12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="2*" />

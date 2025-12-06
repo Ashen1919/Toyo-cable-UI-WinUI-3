@@ -16,22 +16,35 @@
         </Grid.RowDefinitions>
 
         <!--  Header section  -->
-        <Grid Grid.Row="0" Margin="20,10">
+        <Grid
+            Grid.Row="0"
+            Padding="30,20"
+            Background="White"
+            CornerRadius="0,0,12,12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
-                <TextBlock
-                    FontSize="25"
-                    FontWeight="Bold"
-                    Text="Products" />
+                <StackPanel>
+                    <TextBlock
+                        FontSize="28"
+                        FontWeight="Bold"
+                        Foreground="#1A1A2E"
+                        Text="Products" />
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        FontSize="14"
+                        Foreground="#6B7280"
+                        Text="Manage and View All Store Products" />
+                </StackPanel>
             </Grid>
 
             <Grid Grid.Column="1">
                 <TextBox
                     Width="350"
+                    Height="35"
                     HorizontalAlignment="Left"
                     PlaceholderText="Search products here" />
                 <Button

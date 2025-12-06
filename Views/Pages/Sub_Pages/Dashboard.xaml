@@ -17,11 +17,23 @@
             </Grid.RowDefinitions>
 
             <!--  Header Row  -->
-            <Grid Grid.Row="0" Margin="20,10">
-                <TextBlock
-                    FontSize="25"
-                    FontWeight="Bold"
-                    Text="Dashboard" />
+            <Grid
+                Grid.Row="0"
+                Padding="30,20"
+                Background="White"
+                CornerRadius="0,0,12,12">
+                <StackPanel>
+                    <TextBlock
+                        FontSize="28"
+                        FontWeight="Bold"
+                        Foreground="#1A1A2E"
+                        Text="Dashboard" />
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        FontSize="14"
+                        Foreground="#6B7280"
+                        Text="Overview of Sales and Operations" />
+                </StackPanel>
             </Grid>
 
             <!--  Content Row  -->
