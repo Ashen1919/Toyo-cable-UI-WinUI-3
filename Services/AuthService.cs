@@ -97,7 +97,7 @@ namespace Toyo_cable_UI.Services
             }
         }
 
-        // Add logout method
+        // logout method
         public void Logout()
         {
             _authToken = null;

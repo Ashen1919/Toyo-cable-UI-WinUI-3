@@ -1,11 +1,14 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
+using Toyo_cable_UI.Helpers;
+using Toyo_cable_UI.Services;
 using Toyo_cable_UI.Views.Pages.Sub_Pages;
 
 namespace Toyo_cable_UI.Views.Pages;
 
 public sealed partial class HomePage : Page
 {
+
     public HomePage()
     {
         InitializeComponent();
@@ -17,7 +20,7 @@ public sealed partial class HomePage : Page
         if(args.SelectedItemContainer != null)
         {
             var selectedItem = (NavigationViewItem)args.SelectedItemContainer;
-            string selectedTag = selectedItem.Tag?.ToString();
+            string? selectedTag = selectedItem.Tag?.ToString();
 
             switch (selectedTag)
             {
@@ -75,7 +78,10 @@ public sealed partial class HomePage : Page
 
         if (result == ContentDialogResult.Primary)
         {
-            // Clear user session/data here
+            // clear auth details
+            var authService = new AuthService();
+            authService.Logout();
+
             Frame.Navigate(typeof(LoginPage));
         }
     }

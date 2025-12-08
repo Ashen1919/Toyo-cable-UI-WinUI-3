@@ -9,5 +9,6 @@ namespace Toyo_cable_UI.Constants
         public const string Products = "Product";
         public const string Categories = "Category";
         public static string UpdateCategory(Guid id) => $"Category/{id}";
+        public static string ProductWithId(Guid id) => $"Product/{id}";
     }
 }

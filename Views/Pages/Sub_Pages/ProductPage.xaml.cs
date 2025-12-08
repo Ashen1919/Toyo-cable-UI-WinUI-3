@@ -1,7 +1,13 @@
-using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Toyo_cable_UI.Models;
+using Toyo_cable_UI.Services;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
@@ -10,15 +16,84 @@ namespace Toyo_cable_UI.Views.Pages.Sub_Pages;
 
 public sealed partial class ProductPage : Page
 {
+    private readonly ProductServices _productService;
+    private readonly CategoryServices _categoryService;
+
+    public ObservableCollection<Products> Products { get; set; }
+    public ObservableCollection<Category> Categories { get; set; }
+
     private StorageFile selectedImageFile;
+    private string selectedCategoryId;
 
     public ProductPage()
     {
         InitializeComponent();
+        _productService = new ProductServices();
+        _categoryService = new CategoryServices();
+
+        Products = new ObservableCollection<Products>();
+        Categories = new ObservableCollection<Category>();
+
+        LoadCategories();
+        LoadProducts();
+    }
+
+    // Load all categories
+    private async void LoadCategories()
+    {
+        var categories = await _categoryService.GetCategoriesAsync();
+
+        if (categories != null)
+        {
+            Categories.Clear();
+            foreach (var category in categories)
+            {
+                Categories.Add(category);
+            }
+        }
+    }
+
+    // Load all products
+    public async void LoadProducts()
+    {
+        var products = await _productService.GetProductsAsync();
+
+        if (products != null)
+        {
+            Products.Clear();
+            foreach (var product in products)
+            {
+                Products.Add(product);
+            }
+        }
+    }
+
+    // Copy image to Assets folder and return relative path
+    private async Task<string?> SaveImageToAssetsAsync(StorageFile imageFile)
+    {
+        try
+        {
+            StorageFolder installedFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+            StorageFolder assetsFolder = await installedFolder.CreateFolderAsync("Assets", CreationCollisionOption.OpenIfExists);
+
+            string fileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.Name)}";
+            StorageFile copiedFile = await imageFile.CopyAsync(assetsFolder, fileName, NameCollisionOption.ReplaceExisting);
+
+            return $"/Assets/{fileName}";
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error saving image: {ex.Message}");
+            return null;
+        }
     }
 
     private async void addProductBtn_Click(object sender, RoutedEventArgs e)
     {
+        selectedImageFile = null;
+        selectedCategoryId = null;
+        string selectedCategoryName = null;
+
         ContentDialog contentDialog = new ContentDialog()
         {
             Title = "Add New Product",
@@ -28,33 +103,15 @@ public sealed partial class ProductPage : Page
             XamlRoot = this.XamlRoot
         };
 
-        // creating form content with ScrollViewer for better UX
-        ScrollViewer scrollViewer = new ScrollViewer
-        {
-            MaxHeight = 500
-        };
+        ScrollViewer scrollViewer = new ScrollViewer { MaxHeight = 500 };
+        StackPanel stackPanel = new StackPanel() { Spacing = 16, Width = 400 };
 
-        StackPanel stackPanel = new StackPanel()
-        {
-            Spacing = 16,
-            Width = 400
-        };
-
-        // Product ID TextBox
-        TextBox productIdTextBox = new TextBox
-        {
-            Header = "Product ID",
-            PlaceholderText = "Enter Product ID"
-        };
-
-        // Product Name TextBox
         TextBox productNameTextBox = new TextBox
         {
             Header = "Product Name",
             PlaceholderText = "Enter Product Name"
         };
 
-        // Category Label
         TextBlock categoryLabel = new TextBlock
         {
             Text = "Category",
@@ -62,33 +119,37 @@ public sealed partial class ProductPage : Page
             Margin = new Thickness(0, 0, 0, 4)
         };
 
-        // Category DropDownButton
         DropDownButton categoryDropDown = new DropDownButton
         {
             Content = "Select Category",
             HorizontalAlignment = HorizontalAlignment.Stretch
         };
 
-        // Create MenuFlyout for dropdown
         MenuFlyout flyout = new MenuFlyout();
 
-        // Add menu item
-        MenuFlyoutItem categoryItem = new MenuFlyoutItem
+        foreach (var category in Categories)
         {
-            Text = "Accelerator Cable"
-        };
-        categoryItem.Click += (s, args) =>
-        {
-            categoryDropDown.Content = "Accelerator Cable";
-        };
+            MenuFlyoutItem categoryItem = new MenuFlyoutItem
+            {
+                Text = category.Name,
+                Tag = category
+            };
 
-        // Add item to flyout
-        flyout.Items.Add(categoryItem);
+            categoryItem.Click += (s, args) =>
+            {
+                var item = s as MenuFlyoutItem;
+                var cat = item.Tag as Category;
 
-        // Attach flyout to dropdown
+                categoryDropDown.Content = cat.Name;
+                selectedCategoryId = cat.Id.ToString();
+                selectedCategoryName = cat.Name;
+            };
+
+            flyout.Items.Add(categoryItem);
+        }
+
         categoryDropDown.Flyout = flyout;
 
-        // Quantity NumberBox
         NumberBox quantityNumberBox = new NumberBox
         {
             Header = "Quantity",
@@ -98,14 +159,12 @@ public sealed partial class ProductPage : Page
             Value = 0
         };
 
-        // Price TextBox (formatted for currency)
         TextBox priceTextBox = new TextBox
         {
-            Header = "Price",
+            Header = "Unit Price",
             PlaceholderText = "Enter price (e.g., 1500.00)"
         };
 
-        // Image Upload Section
         TextBlock imageLabel = new TextBlock
         {
             Text = "Product Image",
@@ -113,12 +172,7 @@ public sealed partial class ProductPage : Page
             Margin = new Thickness(0, 0, 0, 4)
         };
 
-        // Image upload button and preview
-        StackPanel imagePanel = new StackPanel
-        {
-            Spacing = 8
-        };
-
+        StackPanel imagePanel = new StackPanel { Spacing = 8 };
         Button uploadImageButton = new Button
         {
             Content = "Choose Image",
@@ -135,8 +189,6 @@ public sealed partial class ProductPage : Page
         uploadImageButton.Click += async (s, args) =>
         {
             FileOpenPicker picker = new FileOpenPicker();
-
-            // Get the window handle for the picker
             var hwnd = WindowNative.GetWindowHandle((Application.Current as App)?._window);
             InitializeWithWindow.Initialize(picker, hwnd);
 
@@ -157,8 +209,6 @@ public sealed partial class ProductPage : Page
         imagePanel.Children.Add(uploadImageButton);
         imagePanel.Children.Add(selectedImageText);
 
-        // Add all controls to stack panel
-        stackPanel.Children.Add(productIdTextBox);
         stackPanel.Children.Add(productNameTextBox);
         stackPanel.Children.Add(categoryLabel);
         stackPanel.Children.Add(categoryDropDown);
@@ -167,35 +217,27 @@ public sealed partial class ProductPage : Page
         stackPanel.Children.Add(imageLabel);
         stackPanel.Children.Add(imagePanel);
 
-        // Set scrollviewer content
         scrollViewer.Content = stackPanel;
-
-        // Set dialog content
         contentDialog.Content = scrollViewer;
 
-        // Show dialog and handle result
         ContentDialogResult result = await contentDialog.ShowAsync();
 
         if (result == ContentDialogResult.Primary)
         {
-            // Get values
-            string productId = productIdTextBox.Text;
             string productName = productNameTextBox.Text;
             string category = categoryDropDown.Content?.ToString();
-            double quantity = quantityNumberBox.Value;
+            int quantity = (int)quantityNumberBox.Value;
             string price = priceTextBox.Text;
-            string imagePath = selectedImageFile?.Path ?? "No image";
 
-            // Validate
-            if (string.IsNullOrWhiteSpace(productId) ||
-                string.IsNullOrWhiteSpace(productName) ||
+            if (string.IsNullOrWhiteSpace(productName) ||
                 category == "Select Category" ||
+                string.IsNullOrWhiteSpace(selectedCategoryName) ||
                 string.IsNullOrWhiteSpace(price))
             {
                 ContentDialog errorDialog = new ContentDialog
                 {
                     Title = "Validation Error",
-                    Content = "Please fill in all required fields (Product ID, Name, Category, and Price).",
+                    Content = "Please fill in all required fields (Name, Category, and Price).",
                     CloseButtonText = "OK",
                     XamlRoot = this.XamlRoot
                 };
@@ -203,8 +245,7 @@ public sealed partial class ProductPage : Page
                 return;
             }
 
-            // Validate price format
-            if (!double.TryParse(price, out double priceValue) || priceValue < 0)
+            if (!decimal.TryParse(price, out decimal priceValue) || priceValue < 0)
             {
                 ContentDialog errorDialog = new ContentDialog
                 {
@@ -217,21 +258,373 @@ public sealed partial class ProductPage : Page
                 return;
             }
 
-            // TODO: Save to database
-            ContentDialog successDialog = new ContentDialog
+            string imagePath = null;
+            if (selectedImageFile != null)
             {
-                Title = "Success",
-                Content = $"Product '{productName}' has been added successfully.\n" +
-                          $"Quantity: {quantity}\n" +
-                          $"Price: {priceValue:C}\n" +
-                          $"Image: {(selectedImageFile != null ? selectedImageFile.Name : "None")}",
-                CloseButtonText = "OK",
-                XamlRoot = this.XamlRoot
-            };
-            await successDialog.ShowAsync();
+                imagePath = await SaveImageToAssetsAsync(selectedImageFile);
+            }
 
-            // Reset selected image for next use
-            selectedImageFile = null;
+            var newProduct = new Products
+            {
+                Id = Guid.NewGuid(),
+                Name = productName,
+                Category = selectedCategoryName,
+                Quantity = quantity,
+                Price = priceValue,
+                ImageUrl = imagePath ?? "Assets/default-product.png"
+            };
+
+            try
+            {
+                var createdProduct = await _productService.CreateProductsAsync(newProduct);
+
+                if (createdProduct != null)
+                {
+                    LoadProducts();
+
+                    ContentDialog successDialog = new ContentDialog
+                    {
+                        Title = "Success",
+                        Content = $"Product '{productName}' has been added successfully.",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    await successDialog.ShowAsync();
+                }
+                else
+                {
+                    ContentDialog errorDialog = new ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "Failed to add product. Please try again.",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    await errorDialog.ShowAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                ContentDialog errorDialog = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = $"Failed to add product: {ex.Message}",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                await errorDialog.ShowAsync();
+            }
+        }
+    }
+
+    // Edit Product
+    private async void EditProduct_Click(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        var product = button?.Tag as Products;
+
+        if (product == null)
+        {
+            System.Diagnostics.Debug.WriteLine("Product is null in Edit");
+            return;
+        }
+
+        selectedImageFile = null;
+        string selectedCategoryName = product.Category;
+
+        ContentDialog editDialog = new ContentDialog
+        {
+            Title = "Edit Product",
+            PrimaryButtonText = "Update",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary,
+            XamlRoot = this.XamlRoot
+        };
+
+        ScrollViewer scrollViewer = new ScrollViewer { MaxHeight = 500 };
+        StackPanel stackPanel = new StackPanel() { Spacing = 16, Width = 400 };
+
+        TextBox productNameTextBox = new TextBox
+        {
+            Header = "Product Name",
+            Text = product.Name
+        };
+
+        TextBlock categoryLabel = new TextBlock
+        {
+            Text = "Category",
+            FontWeight = new Windows.UI.Text.FontWeight { Weight = 600 },
+            Margin = new Thickness(0, 0, 0, 4)
+        };
+
+        DropDownButton categoryDropDown = new DropDownButton
+        {
+            Content = product.Category,
+            HorizontalAlignment = HorizontalAlignment.Stretch
+        };
+
+        MenuFlyout flyout = new MenuFlyout();
+
+        foreach (var category in Categories)
+        {
+            MenuFlyoutItem categoryItem = new MenuFlyoutItem
+            {
+                Text = category.Name,
+                Tag = category
+            };
+
+            categoryItem.Click += (s, args) =>
+            {
+                var item = s as MenuFlyoutItem;
+                var cat = item.Tag as Category;
+
+                categoryDropDown.Content = cat.Name;
+                selectedCategoryName = cat.Name;
+            };
+
+            flyout.Items.Add(categoryItem);
+        }
+
+        categoryDropDown.Flyout = flyout;
+
+        NumberBox quantityNumberBox = new NumberBox
+        {
+            Header = "Quantity",
+            Minimum = 0,
+            SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Inline,
+            Value = product.Quantity
+        };
+
+        TextBox priceTextBox = new TextBox
+        {
+            Header = "Unit Price",
+            Text = product.Price.ToString()
+        };
+
+        TextBlock imageLabel = new TextBlock
+        {
+            Text = "Product Image",
+            FontWeight = new Windows.UI.Text.FontWeight { Weight = 600 },
+            Margin = new Thickness(0, 0, 0, 4)
+        };
+
+        StackPanel imagePanel = new StackPanel { Spacing = 8 };
+
+        TextBlock currentImageText = new TextBlock
+        {
+            Text = $"Current: {Path.GetFileName(product.ImageUrl)}",
+            Foreground = new SolidColorBrush(Microsoft.UI.Colors.Gray)
+        };
+
+        Button uploadImageButton = new Button
+        {
+            Content = "Change Image",
+            HorizontalAlignment = HorizontalAlignment.Left
+        };
+
+        TextBlock selectedImageText = new TextBlock
+        {
+            Text = "No new image selected",
+            Foreground = new SolidColorBrush(Microsoft.UI.Colors.Gray),
+            FontStyle = Windows.UI.Text.FontStyle.Italic
+        };
+
+        uploadImageButton.Click += async (s, args) =>
+        {
+            FileOpenPicker picker = new FileOpenPicker();
+            var hwnd = WindowNative.GetWindowHandle((Application.Current as App)?._window);
+            InitializeWithWindow.Initialize(picker, hwnd);
+
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+            picker.FileTypeFilter.Add(".png");
+            picker.ViewMode = PickerViewMode.Thumbnail;
+
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                selectedImageFile = file;
+                selectedImageText.Text = $"New: {file.Name}";
+                selectedImageText.Foreground = new SolidColorBrush(Microsoft.UI.Colors.Green);
+            }
+        };
+
+        imagePanel.Children.Add(currentImageText);
+        imagePanel.Children.Add(uploadImageButton);
+        imagePanel.Children.Add(selectedImageText);
+
+        stackPanel.Children.Add(productNameTextBox);
+        stackPanel.Children.Add(categoryLabel);
+        stackPanel.Children.Add(categoryDropDown);
+        stackPanel.Children.Add(quantityNumberBox);
+        stackPanel.Children.Add(priceTextBox);
+        stackPanel.Children.Add(imageLabel);
+        stackPanel.Children.Add(imagePanel);
+
+        scrollViewer.Content = stackPanel;
+        editDialog.Content = scrollViewer;
+
+        ContentDialogResult result = await editDialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary)
+        {
+            string productName = productNameTextBox.Text;
+            int quantity = (int)quantityNumberBox.Value;
+            string price = priceTextBox.Text;
+
+            if (string.IsNullOrWhiteSpace(productName) ||
+                string.IsNullOrWhiteSpace(selectedCategoryName) ||
+                string.IsNullOrWhiteSpace(price))
+            {
+                ContentDialog errorDialog = new ContentDialog
+                {
+                    Title = "Validation Error",
+                    Content = "Please fill in all required fields.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                await errorDialog.ShowAsync();
+                return;
+            }
+
+            if (!decimal.TryParse(price, out decimal priceValue) || priceValue < 0)
+            {
+                ContentDialog errorDialog = new ContentDialog
+                {
+                    Title = "Validation Error",
+                    Content = "Please enter a valid price.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                await errorDialog.ShowAsync();
+                return;
+            }
+
+            string imagePath = product.ImageUrl; // Keep existing image by default
+            if (selectedImageFile != null)
+            {
+                imagePath = await SaveImageToAssetsAsync(selectedImageFile);
+            }
+
+            var updatedProduct = new Products
+            {
+                Id = product.Id,
+                Name = productName,
+                Category = selectedCategoryName,
+                Quantity = quantity,
+                Price = priceValue,
+                ImageUrl = imagePath ?? product.ImageUrl
+            };
+
+            try
+            {
+                var result_update = await _productService.UpdateProductAsync(product.Id, updatedProduct);
+
+                if (result_update != null)
+                {
+                    LoadProducts();
+
+                    ContentDialog successDialog = new ContentDialog
+                    {
+                        Title = "Success",
+                        Content = "Product updated successfully.",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    await successDialog.ShowAsync();
+                }
+                else
+                {
+                    ContentDialog errorDialog = new ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "Failed to update product.",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    await errorDialog.ShowAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                ContentDialog errorDialog = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = $"Failed to update product: {ex.Message}",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                await errorDialog.ShowAsync();
+            }
+        }
+    }
+
+    // Delete Product
+    private async void DeleteProduct_Click(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        var product = button?.Tag as Products;
+
+        if (product == null)
+        {
+            System.Diagnostics.Debug.WriteLine("Product is null in Delete");
+            return;
+        }
+
+        ContentDialog confirmDialog = new ContentDialog
+        {
+            Title = "Confirm Delete",
+            Content = $"Are you sure you want to delete '{product.Name}'?",
+            PrimaryButtonText = "Delete",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Close,
+            XamlRoot = this.XamlRoot
+        };
+
+        ContentDialogResult result = await confirmDialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary)
+        {
+            try
+            {
+                bool isDeleted = await _productService.DeleteProductAsync(product.Id);
+
+                if (isDeleted)
+                {
+                    LoadProducts();
+
+                    ContentDialog successDialog = new ContentDialog
+                    {
+                        Title = "Success",
+                        Content = "Product deleted successfully.",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    await successDialog.ShowAsync();
+                }
+                else
+                {
+                    ContentDialog errorDialog = new ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "Failed to delete product.",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    await errorDialog.ShowAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                ContentDialog errorDialog = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = $"Failed to delete product: {ex.Message}",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                await errorDialog.ShowAsync();
+            }
         }
     }
 }
