@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Toyo_cable_UI.Constants;
+using Toyo_cable_UI.Helpers;
 using Toyo_cable_UI.Models;
 using Toyo_cable_UI.Models.DTOs;
 
@@ -55,6 +56,7 @@ namespace Toyo_cable_UI.Services
                     {
                         //store token
                         _authToken = loginResponse.JwtToken;
+                        TokenManager.Token = loginResponse.JwtToken;
 
                         // create user object
                         _currentUser = new User
@@ -93,6 +95,15 @@ namespace Toyo_cable_UI.Services
             {
                 return (false, $"An error occurred: {ex.Message}", null);
             }
+        }
+
+        // Add logout method
+        public void Logout()
+        {
+            _authToken = null;
+            _currentUser = null;
+            TokenManager.Token = null;
+            _httpClient.DefaultRequestHeaders.Authorization = null;
         }
     }
 }

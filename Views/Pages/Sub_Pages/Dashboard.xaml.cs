@@ -1,10 +1,13 @@
 using Microsoft.UI.Xaml.Controls;
 using ScottPlot;
+using Toyo_cable_UI.Services;
 
 namespace Toyo_cable_UI.Views.Pages.Sub_Pages;
 
 public sealed partial class Dashboard : Page
 {
+    private readonly AuthService _authService;
+
     public Dashboard()
     {
         InitializeComponent();
@@ -40,7 +43,11 @@ public sealed partial class Dashboard : Page
 
         MyPlotControl.Refresh();
 
+        // auth service
+        _authService = new AuthService();
 
     }
+
+
 
 }

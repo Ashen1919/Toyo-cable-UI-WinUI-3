@@ -75,6 +75,7 @@
                                     Foreground="#666666"
                                     Text="Total Orders" />
                                 <TextBlock
+                                    x:Name="totalOrdersText"
                                     FontSize="28"
                                     FontWeight="Bold"
                                     Foreground="#1976D2"
@@ -120,6 +121,7 @@
                                     Foreground="#666666"
                                     Text="Total Revenue" />
                                 <TextBlock
+                                    x:Name="totalRevenueText"
                                     FontSize="28"
                                     FontWeight="Bold"
                                     Foreground="#388E3C"
@@ -165,6 +167,7 @@
                                     Foreground="#666666"
                                     Text="Total Products" />
                                 <TextBlock
+                                    x:Name="totalProductsText"
                                     FontSize="28"
                                     FontWeight="Bold"
                                     Foreground="#F57C00"
@@ -210,6 +213,7 @@
                                     Foreground="#666666"
                                     Text="Total Categories" />
                                 <TextBlock
+                                    x:Name="totalCategoriesText"
                                     FontSize="28"
                                     FontWeight="Bold"
                                     Foreground="#7B1FA2"
