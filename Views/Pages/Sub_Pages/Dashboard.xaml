@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:Toyo_cable_UI.Views.Pages.Sub_Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Toyo_cable_UI.Models"
     mc:Ignorable="d">
 
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
@@ -79,7 +80,7 @@
                                     FontSize="28"
                                     FontWeight="Bold"
                                     Foreground="#1976D2"
-                                    Text="1,234" />
+                                    Text="0" />
                             </StackPanel>
 
                             <Border
@@ -125,7 +126,7 @@
                                     FontSize="28"
                                     FontWeight="Bold"
                                     Foreground="#388E3C"
-                                    Text="Rs.45,678" />
+                                    Text="Rs.0.00" />
                             </StackPanel>
 
                             <Border
@@ -171,7 +172,7 @@
                                     FontSize="28"
                                     FontWeight="Bold"
                                     Foreground="#F57C00"
-                                    Text="567" />
+                                    Text="0" />
                             </StackPanel>
 
                             <Border
@@ -217,7 +218,7 @@
                                     FontSize="28"
                                     FontWeight="Bold"
                                     Foreground="#7B1FA2"
-                                    Text="24" />
+                                    Text="0" />
                             </StackPanel>
 
                             <Border
@@ -351,241 +352,59 @@
                                     </Grid>
 
                                     <!--  Table Row 1  -->
-                                    <Border
-                                        Padding="10,12"
-                                        BorderBrush="#E0E0E0"
-                                        BorderThickness="0,0,0,1">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*" />
-                                                <ColumnDefinition Width="1*" />
-                                                <ColumnDefinition Width="1*" />
-                                            </Grid.ColumnDefinitions>
+                                    <ItemsRepeater ItemsSource="{x:Bind LowStockProducts}">
+                                        <ItemsRepeater.ItemTemplate>
+                                            <DataTemplate x:DataType="models:Products">
+                                                <Border
+                                                    Padding="10,12"
+                                                    BorderBrush="#E0E0E0"
+                                                    BorderThickness="0,0,0,1">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="2*" />
+                                                            <ColumnDefinition Width="1*" />
+                                                            <ColumnDefinition Width="1*" />
+                                                        </Grid.ColumnDefinitions>
 
-                                            <StackPanel Grid.Column="0">
-                                                <TextBlock
-                                                    FontSize="14"
-                                                    Foreground="#333333"
-                                                    Text="HDMI Cable 2.0" />
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    Foreground="#999999"
-                                                    Text="SKU: CAB-001" />
-                                            </StackPanel>
+                                                        <StackPanel Grid.Column="0">
+                                                            <TextBlock
+                                                                FontSize="14"
+                                                                Foreground="#333333"
+                                                                Text="{x:Bind Name}" />
+                                                            <TextBlock
+                                                                FontSize="11"
+                                                                Foreground="#999999"
+                                                                Text="{x:Bind Category}" />
+                                                        </StackPanel>
 
-                                            <TextBlock
-                                                Grid.Column="1"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontSize="14"
-                                                FontWeight="SemiBold"
-                                                Foreground="#F44336"
-                                                Text="12" />
+                                                        <TextBlock
+                                                            Grid.Column="1"
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            FontSize="14"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="#F44336"
+                                                            Text="{x:Bind Quantity}" />
 
-                                            <Border
-                                                Grid.Column="2"
-                                                Padding="8,4"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Background="#FFEBEE"
-                                                CornerRadius="12">
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="#D32F2F"
-                                                    Text="Critical" />
-                                            </Border>
-                                        </Grid>
-                                    </Border>
+                                                        <Border
+                                                            Grid.Column="2"
+                                                            Padding="8,4"
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            Background="#FFEBEE"
+                                                            CornerRadius="12">
+                                                            <TextBlock
+                                                                FontSize="11"
+                                                                FontWeight="SemiBold"
+                                                                Foreground="#D32F2F"
+                                                                Text="Low Stock" />
+                                                        </Border>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsRepeater.ItemTemplate>
+                                    </ItemsRepeater>
 
-                                    <!--  Table Row 2  -->
-                                    <Border
-                                        Padding="10,12"
-                                        BorderBrush="#E0E0E0"
-                                        BorderThickness="0,0,0,1">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*" />
-                                                <ColumnDefinition Width="1*" />
-                                                <ColumnDefinition Width="1*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <StackPanel Grid.Column="0">
-                                                <TextBlock
-                                                    FontSize="14"
-                                                    Foreground="#333333"
-                                                    Text="USB-C Cable 3M" />
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    Foreground="#999999"
-                                                    Text="SKU: CAB-015" />
-                                            </StackPanel>
-
-                                            <TextBlock
-                                                Grid.Column="1"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontSize="14"
-                                                FontWeight="SemiBold"
-                                                Foreground="#FF9800"
-                                                Text="25" />
-
-                                            <Border
-                                                Grid.Column="2"
-                                                Padding="8,4"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Background="#FFF3E0"
-                                                CornerRadius="12">
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="#F57C00"
-                                                    Text="Low" />
-                                            </Border>
-                                        </Grid>
-                                    </Border>
-
-                                    <!--  Table Row 3  -->
-                                    <Border
-                                        Padding="10,12"
-                                        BorderBrush="#E0E0E0"
-                                        BorderThickness="0,0,0,1">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*" />
-                                                <ColumnDefinition Width="1*" />
-                                                <ColumnDefinition Width="1*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <StackPanel Grid.Column="0">
-                                                <TextBlock
-                                                    FontSize="14"
-                                                    Foreground="#333333"
-                                                    Text="Ethernet Cat6 Cable" />
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    Foreground="#999999"
-                                                    Text="SKU: CAB-023" />
-                                            </StackPanel>
-
-                                            <TextBlock
-                                                Grid.Column="1"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontSize="14"
-                                                FontWeight="SemiBold"
-                                                Foreground="#F44336"
-                                                Text="8" />
-
-                                            <Border
-                                                Grid.Column="2"
-                                                Padding="8,4"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Background="#FFEBEE"
-                                                CornerRadius="12">
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="#D32F2F"
-                                                    Text="Critical" />
-                                            </Border>
-                                        </Grid>
-                                    </Border>
-
-                                    <!--  Table Row 4  -->
-                                    <Border
-                                        Padding="10,12"
-                                        BorderBrush="#E0E0E0"
-                                        BorderThickness="0,0,0,1">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*" />
-                                                <ColumnDefinition Width="1*" />
-                                                <ColumnDefinition Width="1*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <StackPanel Grid.Column="0">
-                                                <TextBlock
-                                                    FontSize="14"
-                                                    Foreground="#333333"
-                                                    Text="Power Extension 5M" />
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    Foreground="#999999"
-                                                    Text="SKU: CAB-007" />
-                                            </StackPanel>
-
-                                            <TextBlock
-                                                Grid.Column="1"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontSize="14"
-                                                FontWeight="SemiBold"
-                                                Foreground="#FF9800"
-                                                Text="18" />
-
-                                            <Border
-                                                Grid.Column="2"
-                                                Padding="8,4"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Background="#FFF3E0"
-                                                CornerRadius="12">
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="#F57C00"
-                                                    Text="Low" />
-                                            </Border>
-                                        </Grid>
-                                    </Border>
-
-                                    <!--  Table Row 5  -->
-                                    <Border Padding="10,12">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*" />
-                                                <ColumnDefinition Width="1*" />
-                                                <ColumnDefinition Width="1*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <StackPanel Grid.Column="0">
-                                                <TextBlock
-                                                    FontSize="14"
-                                                    Foreground="#333333"
-                                                    Text="Audio Jack 3.5mm" />
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    Foreground="#999999"
-                                                    Text="SKU: CAB-042" />
-                                            </StackPanel>
-
-                                            <TextBlock
-                                                Grid.Column="1"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontSize="14"
-                                                FontWeight="SemiBold"
-                                                Foreground="#FF9800"
-                                                Text="22" />
-
-                                            <Border
-                                                Grid.Column="2"
-                                                Padding="8,4"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Background="#FFF3E0"
-                                                CornerRadius="12">
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="#F57C00"
-                                                    Text="Low" />
-                                            </Border>
-                                        </Grid>
-                                    </Border>
                                 </StackPanel>
                             </ScrollViewer>
                         </Grid>
@@ -641,14 +460,6 @@
                                             Text="Best performing items" />
                                     </StackPanel>
                                 </StackPanel>
-
-                                <Button
-                                    Grid.Column="1"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    Content="View All"
-                                    FontSize="12"
-                                    Foreground="#1976D2" />
                             </Grid>
 
                             <!--  Table Content  -->
@@ -691,257 +502,62 @@
                                             Text="Revenue" />
                                     </Grid>
 
-                                    <!--  Table Row 1  -->
-                                    <Border
-                                        Padding="10,12"
-                                        BorderBrush="#E0E0E0"
-                                        BorderThickness="0,0,0,1">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*" />
-                                                <ColumnDefinition Width="1*" />
-                                                <ColumnDefinition Width="1*" />
-                                            </Grid.ColumnDefinitions>
+                                    <!--  Dynamic Table Rows  -->
+                                    <ItemsRepeater ItemsSource="{x:Bind BestSellingProducts, Mode=OneWay}">
+                                        <ItemsRepeater.ItemTemplate>
+                                            <DataTemplate x:DataType="models:BestSellingProduct">
+                                                <Border
+                                                    Padding="10,12"
+                                                    BorderBrush="#E0E0E0"
+                                                    BorderThickness="0,0,0,1">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="2*" />
+                                                            <ColumnDefinition Width="1*" />
+                                                            <ColumnDefinition Width="1*" />
+                                                        </Grid.ColumnDefinitions>
 
-                                            <StackPanel Grid.Column="0">
-                                                <TextBlock
-                                                    FontSize="14"
-                                                    Foreground="#333333"
-                                                    Text="USB-C to HDMI 4K" />
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    Foreground="#999999"
-                                                    Text="SKU: CAB-089" />
-                                            </StackPanel>
+                                                        <StackPanel Grid.Column="0">
+                                                            <TextBlock
+                                                                FontSize="14"
+                                                                Foreground="#333333"
+                                                                Text="{x:Bind ProductName}" />
+                                                            <TextBlock
+                                                                FontSize="11"
+                                                                Foreground="#999999"
+                                                                Text="{x:Bind Category}" />
+                                                        </StackPanel>
 
-                                            <StackPanel
-                                                Grid.Column="1"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    FontSize="14"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="#333333"
-                                                    Text="456" />
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    FontSize="10"
-                                                    Foreground="#999999"
-                                                    Text="units" />
-                                            </StackPanel>
+                                                        <StackPanel
+                                                            Grid.Column="1"
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center">
+                                                            <TextBlock
+                                                                HorizontalAlignment="Center"
+                                                                FontSize="14"
+                                                                FontWeight="SemiBold"
+                                                                Foreground="#333333"
+                                                                Text="{x:Bind FormattedSales}" />
+                                                            <TextBlock
+                                                                HorizontalAlignment="Center"
+                                                                FontSize="10"
+                                                                Foreground="#999999"
+                                                                Text="units" />
+                                                        </StackPanel>
 
-                                            <TextBlock
-                                                Grid.Column="2"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                FontSize="14"
-                                                FontWeight="SemiBold"
-                                                Foreground="#388E3C"
-                                                Text="$12,345" />
-                                        </Grid>
-                                    </Border>
-
-                                    <!--  Table Row 2  -->
-                                    <Border
-                                        Padding="10,12"
-                                        BorderBrush="#E0E0E0"
-                                        BorderThickness="0,0,0,1">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*" />
-                                                <ColumnDefinition Width="1*" />
-                                                <ColumnDefinition Width="1*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <StackPanel Grid.Column="0">
-                                                <TextBlock
-                                                    FontSize="14"
-                                                    Foreground="#333333"
-                                                    Text="Lightning Cable MFI" />
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    Foreground="#999999"
-                                                    Text="SKU: CAB-034" />
-                                            </StackPanel>
-
-                                            <StackPanel
-                                                Grid.Column="1"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    FontSize="14"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="#333333"
-                                                    Text="389" />
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    FontSize="10"
-                                                    Foreground="#999999"
-                                                    Text="units" />
-                                            </StackPanel>
-
-                                            <TextBlock
-                                                Grid.Column="2"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                FontSize="14"
-                                                FontWeight="SemiBold"
-                                                Foreground="#388E3C"
-                                                Text="$9,876" />
-                                        </Grid>
-                                    </Border>
-
-                                    <!--  Table Row 3  -->
-                                    <Border
-                                        Padding="10,12"
-                                        BorderBrush="#E0E0E0"
-                                        BorderThickness="0,0,0,1">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*" />
-                                                <ColumnDefinition Width="1*" />
-                                                <ColumnDefinition Width="1*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <StackPanel Grid.Column="0">
-                                                <TextBlock
-                                                    FontSize="14"
-                                                    Foreground="#333333"
-                                                    Text="Cat6 Ethernet 10M" />
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    Foreground="#999999"
-                                                    Text="SKU: CAB-056" />
-                                            </StackPanel>
-
-                                            <StackPanel
-                                                Grid.Column="1"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    FontSize="14"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="#333333"
-                                                    Text="342" />
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    FontSize="10"
-                                                    Foreground="#999999"
-                                                    Text="units" />
-                                            </StackPanel>
-
-                                            <TextBlock
-                                                Grid.Column="2"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                FontSize="14"
-                                                FontWeight="SemiBold"
-                                                Foreground="#388E3C"
-                                                Text="$8,234" />
-                                        </Grid>
-                                    </Border>
-
-                                    <!--  Table Row 4  -->
-                                    <Border
-                                        Padding="10,12"
-                                        BorderBrush="#E0E0E0"
-                                        BorderThickness="0,0,0,1">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*" />
-                                                <ColumnDefinition Width="1*" />
-                                                <ColumnDefinition Width="1*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <StackPanel Grid.Column="0">
-                                                <TextBlock
-                                                    FontSize="14"
-                                                    Foreground="#333333"
-                                                    Text="DisplayPort 1.4 Cable" />
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    Foreground="#999999"
-                                                    Text="SKU: CAB-078" />
-                                            </StackPanel>
-
-                                            <StackPanel
-                                                Grid.Column="1"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    FontSize="14"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="#333333"
-                                                    Text="298" />
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    FontSize="10"
-                                                    Foreground="#999999"
-                                                    Text="units" />
-                                            </StackPanel>
-
-                                            <TextBlock
-                                                Grid.Column="2"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                FontSize="14"
-                                                FontWeight="SemiBold"
-                                                Foreground="#388E3C"
-                                                Text="$7,567" />
-                                        </Grid>
-                                    </Border>
-
-                                    <!--  Table Row 5  -->
-                                    <Border Padding="10,12">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*" />
-                                                <ColumnDefinition Width="1*" />
-                                                <ColumnDefinition Width="1*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <StackPanel Grid.Column="0">
-                                                <TextBlock
-                                                    FontSize="14"
-                                                    Foreground="#333333"
-                                                    Text="Multi-USB Charger Hub" />
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    Foreground="#999999"
-                                                    Text="SKU: CAB-091" />
-                                            </StackPanel>
-
-                                            <StackPanel
-                                                Grid.Column="1"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    FontSize="14"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="#333333"
-                                                    Text="276" />
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    FontSize="10"
-                                                    Foreground="#999999"
-                                                    Text="units" />
-                                            </StackPanel>
-
-                                            <TextBlock
-                                                Grid.Column="2"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                FontSize="14"
-                                                FontWeight="SemiBold"
-                                                Foreground="#388E3C"
-                                                Text="$6,890" />
-                                        </Grid>
-                                    </Border>
+                                                        <TextBlock
+                                                            Grid.Column="2"
+                                                            HorizontalAlignment="Right"
+                                                            VerticalAlignment="Center"
+                                                            FontSize="14"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="#388E3C"
+                                                            Text="{x:Bind FormattedRevenue}" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsRepeater.ItemTemplate>
+                                    </ItemsRepeater>
                                 </StackPanel>
                             </ScrollViewer>
                         </Grid>
