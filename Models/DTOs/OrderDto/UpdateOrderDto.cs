@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace Toyo_cable_UI.Models.DTOs.OrderDto
+{
+    public class UpdateOrderDto
+    {
+        public DateTime OrderTime { get; set; } = DateTime.UtcNow;
+
+        public decimal SubTotal { get; set; }
+
+        public decimal Discount { get; set; }
+
+        public decimal TotalAmount { get; set; }
+
+        public ICollection<OrderItems>? OrderItems { get; set; }
+    }
+}

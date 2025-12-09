@@ -8,7 +8,9 @@ namespace Toyo_cable_UI.Constants
         public const string Login = "Auth/Login";
         public const string Products = "Product";
         public const string Categories = "Category";
+        public const string Orders = "Order";
         public static string UpdateCategory(Guid id) => $"Category/{id}";
         public static string ProductWithId(Guid id) => $"Product/{id}";
+        public static string OrderWithId(Guid id) => $"Order/{id}";
     }
 }

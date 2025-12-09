@@ -12,6 +12,7 @@ public sealed partial class OrderPage : Page
 {
     private readonly ProductServices _productService;
     private readonly CategoryServices _categoryService;
+    private readonly OrderService _orderService;
 
     public ObservableCollection<Products> Products { get; set; }
     public ObservableCollection<Category> Categories { get; set; }
@@ -26,6 +27,7 @@ public sealed partial class OrderPage : Page
         InitializeComponent();
         _productService = new ProductServices();
         _categoryService = new CategoryServices();
+        _orderService = new OrderService();
 
         Products = new ObservableCollection<Products>();
         Categories = new ObservableCollection<Category>();
@@ -216,22 +218,61 @@ public sealed partial class OrderPage : Page
 
         if (result == ContentDialogResult.Primary)
         {
-            // TODO: Implement order placement logic
-            // Save order to database, generate invoice, etc.
-
-            // Show success message
-            ContentDialog successDialog = new ContentDialog
+            try
             {
-                Title = "Order Placed",
-                Content = "Your order has been placed successfully!",
-                CloseButtonText = "OK",
-                XamlRoot = this.XamlRoot
-            };
-            await successDialog.ShowAsync();
+                // order object
+                var order = new Order
+                {
+                    Discount = _discount,
+                    OrderItems = CartItems.Select(item => new OrderItems
+                    {
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity,
+                    }).ToList()
 
-            // Clear cart after successful order
-            CartItems.Clear();
-            CalculateTotals();
+                };
+
+                var createOrder = await _orderService.CreateOrderAsync(order);
+
+                if(createOrder != null)
+                {
+                    // Show success message
+                    ContentDialog successDialog = new ContentDialog
+                    {
+                        Title = "Order Placed",
+                        Content = "Your order has been placed successfully!",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    await successDialog.ShowAsync();
+
+                    // Clear cart after successful order
+                    CartItems.Clear();
+                    CalculateTotals();
+                }
+                else
+                {
+                    ContentDialog errorDialog = new ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "Failed to place order. Please try again.",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    await errorDialog.ShowAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                ContentDialog errorDialog = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = $"Failed to place order: {ex.Message}",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                await errorDialog.ShowAsync();
+            }
         }
     }
 }
