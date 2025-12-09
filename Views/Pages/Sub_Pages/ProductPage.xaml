@@ -48,6 +48,8 @@
                     Height="35"
                     HorizontalAlignment="Left"
                     PlaceholderText="Search products here" />
+
+                <!--  Add Product Button  -->
                 <Button
                     HorizontalAlignment="Right"
                     Click="addProductBtn_Click"

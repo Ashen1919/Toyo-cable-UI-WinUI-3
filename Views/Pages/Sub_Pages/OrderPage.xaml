@@ -85,69 +85,85 @@
                     </GridView.ItemsPanel>
 
                     <!--  Product Card 1  -->
-                    <Border
-                        Width="220"
-                        Margin="0,0,4,8"
-                        Padding="15"
-                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                        BorderThickness="1"
-                        CornerRadius="12">
-                        <StackPanel Spacing="5">
-                            <Border
-                                Padding="8,4"
-                                HorizontalAlignment="Left"
-                                Background="{ThemeResource SystemFillColorCriticalBrush}"
-                                CornerRadius="4">
-                                <TextBlock
-                                    FontSize="11"
-                                    FontWeight="SemiBold"
-                                    Foreground="White"
-                                    Text="Out Stock" />
-                            </Border>
+                    <ItemsRepeater ItemsSource="{x:Bind Products}">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="models:Products">
+                                <Border
+                                    Width="220"
+                                    Margin="0,0,4,8"
+                                    Padding="15"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="12">
+                                    <StackPanel Spacing="5">
+                                        <Border
+                                            Padding="8,4"
+                                            HorizontalAlignment="Left"
+                                            Background="{x:Bind stockBackgroundColour}"
+                                            CornerRadius="4">
+                                            <TextBlock
+                                                FontSize="11"
+                                                FontWeight="SemiBold"
+                                                Foreground="White"
+                                                Text="{x:Bind stockStatus}" />
+                                        </Border>
 
-                            <Border
-                                Height="140"
-                                Padding="5"
-                                Background="{ThemeResource LayerFillColorDefaultBrush}"
-                                CornerRadius="8">
-                                <Image Source="/Assets/product1.jpg" Stretch="Uniform" />
-                            </Border>
+                                        <Border
+                                            Height="140"
+                                            Padding="5"
+                                            Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                            CornerRadius="8">
+                                            <Image Source="{x:Bind ImageUrl}" Stretch="Uniform" />
+                                        </Border>
 
-                            <StackPanel Spacing="5">
-                                <TextBlock
-                                    FontSize="15"
-                                    FontWeight="SemiBold"
-                                    Text="Accelator Cable"
-                                    TextTrimming="CharacterEllipsis" />
-                                <TextBlock
-                                    FontSize="12"
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    MaxLines="2"
-                                    Text="Cables"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
+                                        <StackPanel Spacing="5">
+                                            <TextBlock
+                                                FontSize="15"
+                                                FontWeight="SemiBold"
+                                                Text="{x:Bind Name}"
+                                                TextTrimming="CharacterEllipsis" />
+                                            <TextBlock
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                MaxLines="2"
+                                                Text="{x:Bind Category}"
+                                                TextTrimming="CharacterEllipsis"
+                                                TextWrapping="Wrap" />
+                                        </StackPanel>
 
-                            <Grid Margin="0,5,0,0">
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    FontSize="16"
-                                    FontWeight="Bold"
-                                    Text="Rs. 380.00" />
-                                <Button
-                                    Padding="8"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    CornerRadius="6">
-                                    <StackPanel Orientation="Horizontal" Spacing="5">
-                                        <FontIcon FontSize="14" Glyph="&#xE710;" />
-                                        <TextBlock FontSize="12" Text="Add to Cart" />
+                                        <Grid Margin="0,5,0,0">
+                                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontSize="16"
+                                                    FontWeight="Bold"
+                                                    Text="Rs." />
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontSize="16"
+                                                    FontWeight="Bold"
+                                                    Text="{x:Bind Price}" />
+                                            </StackPanel>
+                                            <Button
+                                                Padding="8"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Click="addToCartButton_Click"
+                                                CornerRadius="6"
+                                                DataContext="{x:Bind}"
+                                                Tag="{x:Bind}">
+                                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                                    <FontIcon FontSize="14" Glyph="&#xE710;" />
+                                                    <TextBlock FontSize="12" Text="Add to Cart" />
+                                                </StackPanel>
+                                            </Button>
+                                        </Grid>
                                     </StackPanel>
-                                </Button>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
 
                 </GridView>
             </ScrollViewer>
@@ -189,6 +205,7 @@
                 <Button
                     Padding="10,6"
                     HorizontalAlignment="Right"
+                    Click="ResetOrder_Click"
                     Content="Reset Order"
                     CornerRadius="6"
                     FontSize="11"
@@ -197,195 +214,117 @@
 
             <!--  Cart Items List  -->
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
-                <StackPanel Spacing="12">
-                    <!--  Cart Item 1  -->
-                    <Grid
-                        Padding="10"
-                        Background="White"
-                        CornerRadius="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="55" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                <ItemsRepeater ItemsSource="{x:Bind CartItems}">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="models:CartItem">
+                            <Grid
+                                Margin="0,0,0,12"
+                                Padding="10"
+                                Background="White"
+                                CornerRadius="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="55" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
-                        <!--  Product Image  -->
-                        <Border
-                            Grid.Column="0"
-                            Width="45"
-                            Height="45"
-                            Padding="4"
-                            Background="#F5F5F5"
-                            CornerRadius="8">
-                            <Image Source="/Assets/product1.jpg" Stretch="Uniform" />
-                        </Border>
+                                <!--  Product Image  -->
+                                <Border
+                                    Grid.Column="0"
+                                    Width="45"
+                                    Height="45"
+                                    Padding="4"
+                                    Background="#F5F5F5"
+                                    CornerRadius="8">
+                                    <Image Source="{x:Bind ImageUrl}" Stretch="Uniform" />
+                                </Border>
 
-                        <!--  Product Details  -->
-                        <StackPanel
-                            Grid.Column="1"
-                            Margin="8,0,0,0"
-                            VerticalAlignment="Center"
-                            Spacing="3">
-                            <TextBlock
-                                FontSize="13"
-                                FontWeight="SemiBold"
-                                Text="Accelator Cable" />
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <TextBlock
-                                    FontSize="10"
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Text="Cables" />
-                            </StackPanel>
-                            <!--  Quantity Controls  -->
-                            <StackPanel
-                                Margin="0,3,0,0"
-                                Orientation="Horizontal"
-                                Spacing="6">
-                                <Button
-                                    Width="22"
-                                    Height="22"
-                                    Padding="0"
-                                    CornerRadius="4">
-                                    <FontIcon FontSize="9" Glyph="&#xE738;" />
-                                </Button>
-                                <TextBlock
+                                <!--  Product Details  -->
+                                <StackPanel
+                                    Grid.Column="1"
+                                    Margin="8,0,0,0"
                                     VerticalAlignment="Center"
-                                    FontSize="12"
-                                    FontWeight="SemiBold"
-                                    Text="01" />
-                                <Button
-                                    Width="22"
-                                    Height="22"
-                                    Padding="0"
-                                    CornerRadius="4">
-                                    <FontIcon FontSize="9" Glyph="&#xE710;" />
-                                </Button>
-                            </StackPanel>
-                        </StackPanel>
+                                    Spacing="3">
+                                    <TextBlock
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Text="{x:Bind ProductName}" />
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <TextBlock
+                                            FontSize="10"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            Text="{x:Bind Category}" />
+                                    </StackPanel>
 
-                        <!--  Price and Delete  -->
-                        <StackPanel
-                            Grid.Column="2"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top"
-                            Spacing="6">
-                            <Button
-                                Width="28"
-                                Height="28"
-                                Padding="0"
-                                HorizontalAlignment="Right"
-                                Background="{ThemeResource SystemFillColorCriticalBrush}"
-                                CornerRadius="14">
-                                <Button.Resources>
-                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#FF0000" />
-                                </Button.Resources>
-                                <FontIcon
-                                    FontSize="11"
-                                    Foreground="White"
-                                    Glyph="&#xE74D;" />
-                            </Button>
-                            <TextBlock
-                                FontSize="14"
-                                FontWeight="Bold"
-                                Text="Rs. 380.00"
-                                TextAlignment="Right" />
-                        </StackPanel>
-                    </Grid>
+                                    <!--  Quantity Controls  -->
+                                    <StackPanel
+                                        Margin="0,3,0,0"
+                                        Orientation="Horizontal"
+                                        Spacing="6">
+                                        <Button
+                                            Width="22"
+                                            Height="22"
+                                            Padding="0"
+                                            Click="DecreaseQuantity_Click"
+                                            CornerRadius="4"
+                                            DataContext="{x:Bind}"
+                                            Tag="{x:Bind}">
+                                            <FontIcon FontSize="9" Glyph="&#xE738;" />
+                                        </Button>
+                                        <TextBlock
+                                            MinWidth="20"
+                                            VerticalAlignment="Center"
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Text="{x:Bind Quantity, Mode=OneWay}"
+                                            TextAlignment="Center" />
+                                        <Button
+                                            Width="22"
+                                            Height="22"
+                                            Padding="0"
+                                            Click="IncreaseQuantity_Click"
+                                            CornerRadius="4"
+                                            DataContext="{x:Bind}"
+                                            Tag="{x:Bind}">
+                                            <FontIcon FontSize="9" Glyph="&#xE710;" />
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
 
-                    <!--  Cart Item 2  -->
-                    <Grid
-                        Padding="10"
-                        Background="White"
-                        CornerRadius="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="55" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <!--  Product Image  -->
-                        <Border
-                            Grid.Column="0"
-                            Width="45"
-                            Height="45"
-                            Padding="4"
-                            Background="#F5F5F5"
-                            CornerRadius="8">
-                            <Image Source="/Assets/product1.jpg" Stretch="Uniform" />
-                        </Border>
-
-                        <!--  Product Details  -->
-                        <StackPanel
-                            Grid.Column="1"
-                            Margin="8,0,0,0"
-                            VerticalAlignment="Center"
-                            Spacing="3">
-                            <TextBlock
-                                FontSize="13"
-                                FontWeight="SemiBold"
-                                Text="Accelator Cable" />
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <TextBlock
-                                    FontSize="10"
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Text="Cables" />
-                            </StackPanel>
-                            <!--  Quantity Controls  -->
-                            <StackPanel
-                                Margin="0,3,0,0"
-                                Orientation="Horizontal"
-                                Spacing="6">
-                                <Button
-                                    Width="22"
-                                    Height="22"
-                                    Padding="0"
-                                    CornerRadius="4">
-                                    <FontIcon FontSize="9" Glyph="&#xE738;" />
-                                </Button>
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    FontSize="12"
-                                    FontWeight="SemiBold"
-                                    Text="01" />
-                                <Button
-                                    Width="22"
-                                    Height="22"
-                                    Padding="0"
-                                    CornerRadius="4">
-                                    <FontIcon FontSize="9" Glyph="&#xE710;" />
-                                </Button>
-                            </StackPanel>
-                        </StackPanel>
-
-                        <!--  Price and Delete  -->
-                        <StackPanel
-                            Grid.Column="2"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top"
-                            Spacing="6">
-                            <Button
-                                Width="28"
-                                Height="28"
-                                Padding="0"
-                                HorizontalAlignment="Right"
-                                Background="{ThemeResource SystemFillColorCriticalBrush}"
-                                CornerRadius="14">
-                                <Button.Resources>
-                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#FF0000" />
-                                </Button.Resources>
-                                <FontIcon
-                                    FontSize="11"
-                                    Foreground="White"
-                                    Glyph="&#xE74D;" />
-                            </Button>
-                            <TextBlock
-                                FontSize="14"
-                                FontWeight="Bold"
-                                Text="Rs. 380.00"
-                                TextAlignment="Right" />
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
+                                <!--  Price and Delete  -->
+                                <StackPanel
+                                    Grid.Column="2"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Spacing="6">
+                                    <Button
+                                        Width="28"
+                                        Height="28"
+                                        Padding="0"
+                                        HorizontalAlignment="Right"
+                                        Background="{ThemeResource SystemFillColorCriticalBrush}"
+                                        Click="RemoveFromCart_Click"
+                                        CornerRadius="14"
+                                        DataContext="{x:Bind}"
+                                        Tag="{x:Bind}">
+                                        <Button.Resources>
+                                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#FF0000" />
+                                        </Button.Resources>
+                                        <FontIcon
+                                            FontSize="11"
+                                            Foreground="White"
+                                            Glyph="&#xE74D;" />
+                                    </Button>
+                                    <TextBlock
+                                        FontSize="14"
+                                        FontWeight="Bold"
+                                        Text="{x:Bind TotalPrice, Mode=OneWay}"
+                                        TextAlignment="Right" />
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
             </ScrollViewer>
 
             <!--  Summary and Payment  -->
@@ -397,10 +336,11 @@
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Text="Sub-Total" />
                     <TextBlock
+                        x:Name="subTotalText"
                         HorizontalAlignment="Right"
                         FontSize="12"
                         FontWeight="SemiBold"
-                        Text="Rs. 760.00" />
+                        Text="Rs. 0.00" />
                 </Grid>
                 <Grid>
                     <TextBlock
@@ -408,11 +348,12 @@
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Text="Discount" />
                     <TextBlock
+                        x:Name="discountText"
                         HorizontalAlignment="Right"
                         FontSize="12"
                         FontWeight="SemiBold"
                         Foreground="#EF4444"
-                        Text="- Rs. 100.00" />
+                        Text="- Rs. 0.00" />
                 </Grid>
 
                 <Border
@@ -426,10 +367,11 @@
                         FontWeight="Bold"
                         Text="Total Payment" />
                     <TextBlock
+                        x:Name="totalPaymentText"
                         HorizontalAlignment="Right"
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Text="Rs. 660.00" />
+                        FontSize="12"
+                        FontWeight="SemiBold"
+                        Text="Rs. 0.00" />
                 </Grid>
 
                 <!--  Continue Button  -->
@@ -438,6 +380,7 @@
                     Padding="0,8"
                     HorizontalAlignment="Stretch"
                     BorderThickness="0"
+                    Click="PlaceOrder_Click"
                     CornerRadius="8"
                     FontWeight="Bold"
                     Style="{ThemeResource AccentButtonStyle}">
