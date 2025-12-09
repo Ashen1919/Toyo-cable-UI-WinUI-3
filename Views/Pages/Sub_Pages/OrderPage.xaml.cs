@@ -1,30 +1,63 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
+using System.Collections.ObjectModel;
+using Toyo_cable_UI.Models;
+using Toyo_cable_UI.Services;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace Toyo_cable_UI.Views.Pages.Sub_Pages;
 
-/// <summary>
-/// An empty page that can be used on its own or navigated to within a Frame.
-/// </summary>
 public sealed partial class OrderPage : Page
 {
+    private readonly ProductServices _productService;
+    private readonly CategoryServices _categoryService;
+
+    public ObservableCollection<Products> Products { get; set; }
+    public ObservableCollection<Category> Categories { get; }
+
     public OrderPage()
     {
         InitializeComponent();
+
+        _productService = new ProductServices();
+        _categoryService = new CategoryServices();
+
+        Products = new ObservableCollection<Products>();
+        Categories = new ObservableCollection<Category>();
+
+        LoadProducts();
+        LoadCategories();
     }
+
+    //load all products
+    public async void LoadProducts()
+    {
+        var products = await _productService.GetProductsAsync();
+
+        if(products != null)
+        {
+            Products.Clear();
+
+            foreach(var product in products)
+            {
+                Products.Add(product);
+            }
+        }
+    }
+
+    // Load all categories
+    public async void LoadCategories()
+    {
+        var categories = await _categoryService.GetCategoriesAsync();
+
+        if(categories != null)
+        {
+            Categories.Clear();
+
+            foreach(var category in categories)
+            {
+                Categories.Add(category);
+            }
+        }
+    }
+
 }

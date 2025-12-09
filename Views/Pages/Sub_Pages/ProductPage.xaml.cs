@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Toyo_cable_UI.Models;
 using Toyo_cable_UI.Services;
@@ -18,18 +17,20 @@ public sealed partial class ProductPage : Page
 {
     private readonly ProductServices _productService;
     private readonly CategoryServices _categoryService;
+    private readonly CloudinaryService _cloudinaryService;
 
     public ObservableCollection<Products> Products { get; set; }
     public ObservableCollection<Category> Categories { get; set; }
 
-    private StorageFile selectedImageFile;
-    private string selectedCategoryId;
+    private StorageFile? selectedImageFile;
+    private string? selectedCategoryId;
 
     public ProductPage()
     {
         InitializeComponent();
         _productService = new ProductServices();
         _categoryService = new CategoryServices();
+        _cloudinaryService = new CloudinaryService();
 
         Products = new ObservableCollection<Products>();
         Categories = new ObservableCollection<Category>();
@@ -92,7 +93,7 @@ public sealed partial class ProductPage : Page
     {
         selectedImageFile = null;
         selectedCategoryId = null;
-        string selectedCategoryName = null;
+        string? selectedCategoryName = null;
 
         ContentDialog contentDialog = new ContentDialog()
         {
@@ -225,19 +226,18 @@ public sealed partial class ProductPage : Page
         if (result == ContentDialogResult.Primary)
         {
             string productName = productNameTextBox.Text;
-            string category = categoryDropDown.Content?.ToString();
             int quantity = (int)quantityNumberBox.Value;
             string price = priceTextBox.Text;
 
+            // Validation...
             if (string.IsNullOrWhiteSpace(productName) ||
-                category == "Select Category" ||
                 string.IsNullOrWhiteSpace(selectedCategoryName) ||
                 string.IsNullOrWhiteSpace(price))
             {
                 ContentDialog errorDialog = new ContentDialog
                 {
                     Title = "Validation Error",
-                    Content = "Please fill in all required fields (Name, Category, and Price).",
+                    Content = "Please fill in all required fields.",
                     CloseButtonText = "OK",
                     XamlRoot = this.XamlRoot
                 };
@@ -258,12 +258,40 @@ public sealed partial class ProductPage : Page
                 return;
             }
 
-            string imagePath = null;
+            // Upload image to Cloudinary
+            string imageUrl = null;
             if (selectedImageFile != null)
             {
-                imagePath = await SaveImageToAssetsAsync(selectedImageFile);
+                // Show loading indicator
+                ContentDialog loadingDialog = new ContentDialog
+                {
+                    Title = "Uploading...",
+                    Content = "Please wait while we upload the image.",
+                    XamlRoot = this.XamlRoot
+                };
+
+                var loadingTask = loadingDialog.ShowAsync();
+
+                // Upload to cloud
+                imageUrl = await _cloudinaryService.UploadImageAsync(selectedImageFile);
+
+                loadingDialog.Hide();
+
+                if (imageUrl == null)
+                {
+                    ContentDialog errorDialog = new ContentDialog
+                    {
+                        Title = "Upload Error",
+                        Content = "Failed to upload image. Please try again.",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    await errorDialog.ShowAsync();
+                    return;
+                }
             }
 
+            // Create new product with Cloudinary URL
             var newProduct = new Products
             {
                 Id = Guid.NewGuid(),
@@ -271,7 +299,7 @@ public sealed partial class ProductPage : Page
                 Category = selectedCategoryName,
                 Quantity = quantity,
                 Price = priceValue,
-                ImageUrl = imagePath ?? "Assets/default-product.png"
+                ImageUrl = imageUrl ?? "https://placehold.co/600x400"
             };
 
             try
@@ -500,10 +528,23 @@ public sealed partial class ProductPage : Page
                 return;
             }
 
-            string imagePath = product.ImageUrl; // Keep existing image by default
+            string imagePath = product.ImageUrl; 
             if (selectedImageFile != null)
             {
-                imagePath = await SaveImageToAssetsAsync(selectedImageFile);
+                // Show loading indicator
+                ContentDialog loadingDialog = new ContentDialog
+                {
+                    Title = "Uploading...",
+                    Content = "Please wait while we upload the image.",
+                    XamlRoot = this.XamlRoot
+                };
+
+                var loadingTask = loadingDialog.ShowAsync();
+
+                // Upload to cloud
+                imagePath = await _cloudinaryService.UploadImageAsync(selectedImageFile);
+
+                loadingDialog.Hide();
             }
 
             var updatedProduct = new Products
@@ -565,11 +606,7 @@ public sealed partial class ProductPage : Page
         var button = sender as Button;
         var product = button?.Tag as Products;
 
-        if (product == null)
-        {
-            System.Diagnostics.Debug.WriteLine("Product is null in Delete");
-            return;
-        }
+        if (product == null) return;
 
         ContentDialog confirmDialog = new ContentDialog
         {
@@ -587,10 +624,17 @@ public sealed partial class ProductPage : Page
         {
             try
             {
-                bool isDeleted = await _productService.DeleteProductAsync(product.Id);
+                // Delete from database
+                bool isDeleted = await _cloudinaryService.DeleteImageAsync(product.ImageUrl);
 
                 if (isDeleted)
                 {
+                    // Delete image from Cloudinary
+                    if (!string.IsNullOrEmpty(product.ImageUrl))
+                    {
+                        await _productService.DeleteProductAsync(product.Id);
+                    }
+
                     LoadProducts();
 
                     ContentDialog successDialog = new ContentDialog
@@ -601,17 +645,6 @@ public sealed partial class ProductPage : Page
                         XamlRoot = this.XamlRoot
                     };
                     await successDialog.ShowAsync();
-                }
-                else
-                {
-                    ContentDialog errorDialog = new ContentDialog
-                    {
-                        Title = "Error",
-                        Content = "Failed to delete product.",
-                        CloseButtonText = "OK",
-                        XamlRoot = this.XamlRoot
-                    };
-                    await errorDialog.ShowAsync();
                 }
             }
             catch (Exception ex)
