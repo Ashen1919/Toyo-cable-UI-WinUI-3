@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -18,12 +19,15 @@ public sealed partial class OrderPage : Page
     public ObservableCollection<Products> Products { get; set; }
     public ObservableCollection<Category> Categories { get; set; }
     public ObservableCollection<CartItem> CartItems { get; set; }
+    public ObservableCollection<Products> FilteredProducts { get; set; } = new ObservableCollection<Products>();
 
     private ObservableCollection<Products> _allProducts;
 
     private decimal _subTotal;
     private decimal _discount;
     private decimal _totalPayment;
+
+    private ToggleButton _currentSelectedToggle;
 
     public OrderPage()
     {
@@ -401,4 +405,37 @@ public sealed partial class OrderPage : Page
         }
     }
 
+    private void AllProduct_Click(object sender, RoutedEventArgs e)
+    {
+        LoadProducts();
+    }
+
+    private void CategorySelect_Click(object sender, RoutedEventArgs e)
+    {
+        var toggle = sender as ToggleButton;
+        var category = toggle.DataContext as Category;
+
+        if(_currentSelectedToggle ==  toggle && toggle.IsChecked == false)
+        {
+            toggle.IsChecked = true;
+            return;
+        }
+
+        if(_currentSelectedToggle != null && _currentSelectedToggle != toggle)
+        {
+            _currentSelectedToggle.IsChecked = false;
+        }
+
+        // Update current selection
+        _currentSelectedToggle = toggle;
+        toggle.IsChecked = true;
+
+        // Filter products by category
+        FilteredProducts.Clear();
+        var filtered = _allProducts.Where(p => p.Category == category.Name).ToList();
+        foreach (var product in filtered)
+        {
+            FilteredProducts.Add(product);
+        }
+    }
 }

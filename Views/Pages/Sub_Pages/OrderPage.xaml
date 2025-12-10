@@ -62,11 +62,11 @@
             <!--  Categories section  -->
             <Grid Grid.Row="1" Margin="20,10">
                 <StackPanel Orientation="Horizontal" Spacing="10">
-                    <ToggleButton Content="All Products" />
+                    <ToggleButton Click="AllProduct_Click" Content="All Products" />
                     <ItemsRepeater ItemsSource="{x:Bind Categories}">
                         <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="models:Category">
-                                <ToggleButton Content="{x:Bind Name}" />
+                                <ToggleButton Click="CategorySelect_Click" Content="{x:Bind Name}" />
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
                     </ItemsRepeater>
