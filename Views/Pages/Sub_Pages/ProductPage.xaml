@@ -68,26 +68,17 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!--  Filter Type  -->
-            <ComboBox
-                x:Name="FilterTypeComboBox"
-                Grid.Column="0"
-                Width="150"
-                Header="Filter By"
-                PlaceholderText="Select..."
-                SelectionChanged="FilterTypeComboBox_SelectionChanged">
-                <ComboBoxItem Content="All" IsSelected="True" />
-                <ComboBoxItem Content="Name" />
-                <ComboBoxItem Content="Category" />
-            </ComboBox>
-
             <!--  Search Box  -->
-            <TextBox
+            <AutoSuggestBox
                 x:Name="SearchTextBox"
                 Grid.Column="1"
+                Width="350"
                 Margin="10,0,0,0"
+                HorizontalAlignment="Left"
                 Header="Search"
                 PlaceholderText="Type to search..."
+                QuerySubmitted="SearchBox_QuerySubmitted"
+                SuggestionChosen="SearchBox_SuggestionChoosen"
                 TextChanged="SearchTextBox_TextChanged" />
 
             <!--  Sort By  -->

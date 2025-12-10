@@ -48,10 +48,14 @@
                 </StackPanel>
 
                 <Grid Grid.Column="1" HorizontalAlignment="Right">
-                    <TextBox
+                    <AutoSuggestBox
+                        x:Name="SearchTextBox"
                         Width="280"
                         Height="35"
-                        PlaceholderText="Search Product Here" />
+                        PlaceholderText="Search Product Here"
+                        QuerySubmitted="SearchBox_QuerySubmitted"
+                        SuggestionChosen="SearchBox_SuggestionChosen"
+                        TextChanged="SearchBox_TextChanged" />
                 </Grid>
             </Grid>
 

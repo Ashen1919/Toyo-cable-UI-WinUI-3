@@ -3,7 +3,9 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Toyo_cable_UI.Models;
 using Toyo_cable_UI.Services;
 using Windows.Storage;
@@ -33,6 +35,7 @@ public sealed partial class ProductPage : Page
     private int _pageSize = 25;
 
     private System.Threading.CancellationTokenSource? _searchCancellationTokenSource;
+    private ObservableCollection<Products> _allProducts;
 
     public ProductPage()
     {
@@ -44,6 +47,8 @@ public sealed partial class ProductPage : Page
         Categories = new ObservableCollection<Category>();
 
         InitializeComponent();
+
+        _allProducts = new ObservableCollection<Products>(Products);
 
         this.Loaded += ProductPage_Loaded;
     }
@@ -99,65 +104,6 @@ public sealed partial class ProductPage : Page
         }
     }
 
-    // Filter type changed
-    private void FilterTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        // check if combobox is null
-        if (FilterTypeComboBox.SelectedItem == null)
-        {
-            System.Diagnostics.Debug.WriteLine("Combo Box return null value");
-            return;
-        }
-
-        var selectedItem = (ComboBoxItem)FilterTypeComboBox.SelectedItem;
-        var filterType = selectedItem?.Content?.ToString();
-
-        if (filterType == "All")
-        {
-            _currentFilterOn = null;
-            _currentFilterQuery = null;
-        }
-        else
-        {
-            _currentFilterOn = filterType;
-            SearchTextBox.IsEnabled = true;
-        }
-
-        _currentPage = 1;
-        LoadProducts();
-    }
-
-    // Search text changed
-    private async void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
-    {
-        // Cancel previous search
-        _searchCancellationTokenSource?.Cancel();
-        _searchCancellationTokenSource = new System.Threading.CancellationTokenSource();
-        var token = _searchCancellationTokenSource.Token;
-
-        try
-        {
-            // Wait 500ms before searching (debounce)
-            await System.Threading.Tasks.Task.Delay(500, token);
-
-            // Check if still not cancelled after delay
-            if (!token.IsCancellationRequested)
-            {
-                _currentFilterQuery = string.IsNullOrWhiteSpace(SearchTextBox.Text) ? null : SearchTextBox.Text;
-                _currentPage = 1;
-                LoadProducts();
-            }
-        }
-        catch (System.Threading.Tasks.TaskCanceledException)
-        {
-            // Search was cancelled because user is still typing - this is expected
-        }
-        catch (Exception ex)
-        {
-            // Handle unexpected errors
-            System.Diagnostics.Debug.WriteLine($"Search error: {ex.Message}");
-        }
-    }
     // Sort changed
     private void SortByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
@@ -213,7 +159,6 @@ public sealed partial class ProductPage : Page
     // Clear all filters
     private void ClearFilters_Click(object sender, RoutedEventArgs e)
     {
-        FilterTypeComboBox.SelectedIndex = 0; 
         SearchTextBox.Text = "";
         SortByComboBox.SelectedIndex = 0; 
         PageSizeComboBox.SelectedIndex = 1; 
@@ -813,6 +758,114 @@ public sealed partial class ProductPage : Page
                     XamlRoot = this.XamlRoot
                 };
                 await errorDialog.ShowAsync();
+            }
+        }
+    }
+
+    private void SearchTextBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if(_allProducts == null ||  _allProducts.Count == 0)
+        {
+            Debug.WriteLine("ERROR: _allProducts is null or empty!");
+
+            // Try to initialize it now if Products has items
+            if (Products.Count > 0)
+            {
+                _allProducts = new ObservableCollection<Products>(Products);
+                Debug.WriteLine($"Re-initialized _allProducts with {_allProducts.Count} products");
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+        {
+            var searchTerm = sender.Text?.Trim() ?? "";
+
+            Debug.WriteLine($"Searching for: '{searchTerm}'");
+            Debug.WriteLine($"Total products available: {_allProducts.Count}");
+
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                // Clear suggestions
+                sender.ItemsSource = null;
+
+                // Show ALL products when search is empty
+                Debug.WriteLine("Search cleared - showing all products");
+                Products.Clear();
+                foreach (var product in _allProducts)
+                {
+                    Products.Add(product);
+                }
+                Debug.WriteLine($"Displayed {Products.Count} products");
+            }
+            else
+            {
+                // Case-insensitive search
+                var lowerSearchTerm = searchTerm.ToLower();
+
+                // Find matching products
+                var filteredProducts = _allProducts.Where(p =>
+                    (!string.IsNullOrEmpty(p.Name) && p.Name.ToLower().Contains(lowerSearchTerm)) ||
+                    (!string.IsNullOrEmpty(p.Category) && p.Category.ToLower().Contains(lowerSearchTerm))
+                ).ToList();
+
+                Debug.WriteLine($"Found {filteredProducts.Count} matching products");
+
+                // Set suggestions for dropdown
+                var suggestions = filteredProducts.Select(p => p.Name).Take(10).ToList();
+                sender.ItemsSource = suggestions;
+
+                // Update the product grid
+                Products.Clear();
+                foreach (var product in filteredProducts)
+                {
+                    Products.Add(product);
+                }
+
+                Debug.WriteLine($"Displayed {Products.Count} filtered products");
+            }
+        }
+
+    }
+
+    private void SearchBox_SuggestionChoosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+    {
+        // Set the text to the selected suggestion
+        if (args.SelectedItem != null)
+        {
+            sender.Text = args.SelectedItem.ToString();
+        }
+    }
+
+    private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        var searchTerm = args.QueryText?.Trim() ?? "";
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            // Show all products
+            Products.Clear();
+            foreach (var product in _allProducts)
+            {
+                Products.Add(product);
+            }
+        }
+        else
+        {
+            var lowerSearchTerm = searchTerm.ToLower();
+
+            var filteredProducts = _allProducts.Where(p =>
+                (!string.IsNullOrEmpty(p.Name) && p.Name.ToLower().Contains(lowerSearchTerm)) ||
+                (!string.IsNullOrEmpty(p.Category) && p.Category.ToLower().Contains(lowerSearchTerm))
+            ).ToList();
+
+            Products.Clear();
+            foreach (var product in filteredProducts)
+            {
+                Products.Add(product);
             }
         }
     }

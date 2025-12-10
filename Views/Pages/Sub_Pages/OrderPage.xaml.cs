@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using Toyo_cable_UI.Models;
 using Toyo_cable_UI.Services;
@@ -18,6 +19,8 @@ public sealed partial class OrderPage : Page
     public ObservableCollection<Category> Categories { get; set; }
     public ObservableCollection<CartItem> CartItems { get; set; }
 
+    private ObservableCollection<Products> _allProducts;
+
     private decimal _subTotal;
     private decimal _discount;
     private decimal _totalPayment;
@@ -33,9 +36,21 @@ public sealed partial class OrderPage : Page
         Categories = new ObservableCollection<Category>();
         CartItems = new ObservableCollection<CartItem>();
 
+        _allProducts = new ObservableCollection<Products>(Products);
+
         LoadProducts();
         LoadCategories();
         CalculateTotals();
+
+        if (Products.Count > 0)
+        {
+            _allProducts = new ObservableCollection<Products>(Products);
+            Debug.WriteLine($"Backed up {_allProducts.Count} products");
+        }
+        else
+        {
+            Debug.WriteLine("WARNING: No products loaded!");
+        }
     }
 
     // Load all products
@@ -51,6 +66,7 @@ public sealed partial class OrderPage : Page
             }
         }
     }
+
 
     // Load all categories
     public async void LoadCategories()
@@ -275,4 +291,114 @@ public sealed partial class OrderPage : Page
             }
         }
     }
+
+    // search box implementation
+    private void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        // Check if _allProducts is initialized
+        if (_allProducts == null || _allProducts.Count == 0)
+        {
+            Debug.WriteLine("ERROR: _allProducts is null or empty!");
+
+            // Try to initialize it now if Products has items
+            if (Products.Count > 0)
+            {
+                _allProducts = new ObservableCollection<Products>(Products);
+                Debug.WriteLine($"Re-initialized _allProducts with {_allProducts.Count} products");
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+        {
+            var searchTerm = sender.Text?.Trim() ?? "";
+
+            Debug.WriteLine($"Searching for: '{searchTerm}'");
+            Debug.WriteLine($"Total products available: {_allProducts.Count}");
+
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                // Clear suggestions
+                sender.ItemsSource = null;
+
+                // Show ALL products when search is empty
+                Debug.WriteLine("Search cleared - showing all products");
+                Products.Clear();
+                foreach (var product in _allProducts)
+                {
+                    Products.Add(product);
+                }
+                Debug.WriteLine($"Displayed {Products.Count} products");
+            }
+            else
+            {
+                // Case-insensitive search
+                var lowerSearchTerm = searchTerm.ToLower();
+
+                // Find matching products
+                var filteredProducts = _allProducts.Where(p =>
+                    (!string.IsNullOrEmpty(p.Name) && p.Name.ToLower().Contains(lowerSearchTerm)) ||
+                    (!string.IsNullOrEmpty(p.Category) && p.Category.ToLower().Contains(lowerSearchTerm))
+                ).ToList();
+
+                Debug.WriteLine($"Found {filteredProducts.Count} matching products");
+
+                // Set suggestions for dropdown
+                var suggestions = filteredProducts.Select(p => p.Name).Take(10).ToList();
+                sender.ItemsSource = suggestions;
+
+                // Update the product grid
+                Products.Clear();
+                foreach (var product in filteredProducts)
+                {
+                    Products.Add(product);
+                }
+
+                Debug.WriteLine($"Displayed {Products.Count} filtered products");
+            }
+        }
+    }
+
+    private void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+    {
+        // Set the text to the selected suggestion
+        if (args.SelectedItem != null)
+        {
+            sender.Text = args.SelectedItem.ToString();
+        }
+    }
+
+    private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        var searchTerm = args.QueryText?.Trim() ?? "";
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            // Show all products
+            Products.Clear();
+            foreach (var product in _allProducts)
+            {
+                Products.Add(product);
+            }
+        }
+        else
+        {
+            var lowerSearchTerm = searchTerm.ToLower();
+
+            var filteredProducts = _allProducts.Where(p =>
+                (!string.IsNullOrEmpty(p.Name) && p.Name.ToLower().Contains(lowerSearchTerm)) ||
+                (!string.IsNullOrEmpty(p.Category) && p.Category.ToLower().Contains(lowerSearchTerm))
+            ).ToList();
+
+            Products.Clear();
+            foreach (var product in filteredProducts)
+            {
+                Products.Add(product);
+            }
+        }
+    }
+
 }
