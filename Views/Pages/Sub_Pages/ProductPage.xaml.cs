@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Threading.Tasks;
 using Toyo_cable_UI.Models;
 using Toyo_cable_UI.Services;
 using Windows.Storage;
@@ -25,9 +24,18 @@ public sealed partial class ProductPage : Page
     private StorageFile? selectedImageFile;
     private string? selectedCategoryId;
 
+    // Filter and pagination properties
+    private string? _currentFilterOn = null;
+    private string? _currentFilterQuery = null;
+    private string? _currentSortBy = null;
+    private bool _isAscending = true;
+    private int _currentPage = 1;
+    private int _pageSize = 25;
+
+    private System.Threading.CancellationTokenSource? _searchCancellationTokenSource;
+
     public ProductPage()
     {
-        InitializeComponent();
         _productService = new ProductServices();
         _categoryService = new CategoryServices();
         _cloudinaryService = new CloudinaryService();
@@ -35,6 +43,13 @@ public sealed partial class ProductPage : Page
         Products = new ObservableCollection<Products>();
         Categories = new ObservableCollection<Category>();
 
+        InitializeComponent();
+
+        this.Loaded += ProductPage_Loaded;
+    }
+
+    private void ProductPage_Loaded(object sender, RoutedEventArgs e)
+    {
         LoadCategories();
         LoadProducts();
     }
@@ -55,9 +70,19 @@ public sealed partial class ProductPage : Page
     }
 
     // Load all products
-    public async void LoadProducts()
+    private async void LoadProducts()
     {
-        var products = await _productService.GetProductsAsync();
+        if (_productService == null)
+            return;
+
+        var products = await _productService.GetProductsAsync(
+            filterOn: _currentFilterOn,
+            filterQuery: _currentFilterQuery,
+            sortBy: _currentSortBy,
+            isAscending: _isAscending,
+            pageNumber: _currentPage,
+            pageSize: _pageSize
+        );
 
         if (products != null)
         {
@@ -66,27 +91,158 @@ public sealed partial class ProductPage : Page
             {
                 Products.Add(product);
             }
+
+            // Update pagination buttons
+            PreviousPageButton.IsEnabled = _currentPage > 1;
+            NextPageButton.IsEnabled = products.Count == _pageSize; 
+            CurrentPageText.Text = _currentPage.ToString();
         }
     }
 
-    // Copy image to Assets folder and return relative path
-    private async Task<string?> SaveImageToAssetsAsync(StorageFile imageFile)
+    // Filter type changed
+    private void FilterTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        // check if combobox is null
+        if (FilterTypeComboBox.SelectedItem == null)
+        {
+            System.Diagnostics.Debug.WriteLine("Combo Box return null value");
+            return;
+        }
+
+        var selectedItem = (ComboBoxItem)FilterTypeComboBox.SelectedItem;
+        var filterType = selectedItem?.Content?.ToString();
+
+        if (filterType == "All")
+        {
+            _currentFilterOn = null;
+            _currentFilterQuery = null;
+        }
+        else
+        {
+            _currentFilterOn = filterType;
+            SearchTextBox.IsEnabled = true;
+        }
+
+        _currentPage = 1;
+        LoadProducts();
+    }
+
+    // Search text changed
+    private async void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        // Cancel previous search
+        _searchCancellationTokenSource?.Cancel();
+        _searchCancellationTokenSource = new System.Threading.CancellationTokenSource();
+        var token = _searchCancellationTokenSource.Token;
+
         try
         {
-            StorageFolder installedFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
-            StorageFolder assetsFolder = await installedFolder.CreateFolderAsync("Assets", CreationCollisionOption.OpenIfExists);
+            // Wait 500ms before searching (debounce)
+            await System.Threading.Tasks.Task.Delay(500, token);
 
-            string fileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.Name)}";
-            StorageFile copiedFile = await imageFile.CopyAsync(assetsFolder, fileName, NameCollisionOption.ReplaceExisting);
-
-            return $"/Assets/{fileName}";
+            // Check if still not cancelled after delay
+            if (!token.IsCancellationRequested)
+            {
+                _currentFilterQuery = string.IsNullOrWhiteSpace(SearchTextBox.Text) ? null : SearchTextBox.Text;
+                _currentPage = 1;
+                LoadProducts();
+            }
+        }
+        catch (System.Threading.Tasks.TaskCanceledException)
+        {
+            // Search was cancelled because user is still typing - this is expected
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error saving image: {ex.Message}");
-            return null;
+            // Handle unexpected errors
+            System.Diagnostics.Debug.WriteLine($"Search error: {ex.Message}");
         }
+    }
+    // Sort changed
+    private void SortByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        // check if combobox is null
+        if (SortByComboBox.SelectedItem == null)
+        {
+            System.Diagnostics.Debug.WriteLine("Combo Box return null value");
+            return;
+        }
+
+        var selectedItem = (ComboBoxItem)SortByComboBox.SelectedItem;
+        var sortOption = selectedItem?.Content?.ToString();
+
+        switch (sortOption)
+        {
+            case "None":
+                _currentSortBy = null;
+                _isAscending = true;
+                break;
+            case "Name (A-Z)":
+                _currentSortBy = "Name";
+                _isAscending = true;
+                break;
+            case "Name (Z-A)":
+                _currentSortBy = "Name";
+                _isAscending = false;
+                break;
+        }
+
+        _currentPage = 1;
+        LoadProducts();
+    }
+
+    // Page size changed
+    private void PageSizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        // check if combobox is null
+        if (PageSizeComboBox.SelectedItem == null)
+        {
+            System.Diagnostics.Debug.WriteLine("Combo Box return null value");
+            return;
+        }
+
+        var selectedItem = (ComboBoxItem)PageSizeComboBox.SelectedItem;
+        if (selectedItem != null && int.TryParse(selectedItem.Content?.ToString(), out int pageSize))
+        {
+            _pageSize = pageSize;
+            _currentPage = 1;
+            LoadProducts();
+        }
+    }
+
+    // Clear all filters
+    private void ClearFilters_Click(object sender, RoutedEventArgs e)
+    {
+        FilterTypeComboBox.SelectedIndex = 0; 
+        SearchTextBox.Text = "";
+        SortByComboBox.SelectedIndex = 0; 
+        PageSizeComboBox.SelectedIndex = 1; 
+
+        _currentFilterOn = null;
+        _currentFilterQuery = null;
+        _currentSortBy = null;
+        _isAscending = true;
+        _currentPage = 1;
+        _pageSize = 25;
+
+        LoadProducts();
+    }
+
+    // Previous page
+    private void PreviousPage_Click(object sender, RoutedEventArgs e)
+    {
+        if (_currentPage > 1)
+        {
+            _currentPage--;
+            LoadProducts();
+        }
+    }
+
+    // Next page
+    private void NextPage_Click(object sender, RoutedEventArgs e)
+    {
+        _currentPage++;
+        LoadProducts();
     }
 
     private async void addProductBtn_Click(object sender, RoutedEventArgs e)

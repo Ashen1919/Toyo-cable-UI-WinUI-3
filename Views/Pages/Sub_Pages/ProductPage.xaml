@@ -10,9 +10,10 @@
     mc:Ignorable="d">
 
     <Grid RequestedTheme="Light">
-        <!--  Define 2 rows  -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -27,52 +28,107 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0">
-                <StackPanel>
-                    <TextBlock
-                        FontSize="28"
-                        FontWeight="Bold"
-                        Foreground="#1A1A2E"
-                        Text="Products" />
-                    <TextBlock
-                        Margin="0,4,0,0"
-                        FontSize="14"
-                        Foreground="#6B7280"
-                        Text="Manage and View All Store Products" />
+            <StackPanel Grid.Column="0">
+                <TextBlock
+                    FontSize="28"
+                    FontWeight="Bold"
+                    Foreground="#1A1A2E"
+                    Text="Products" />
+                <TextBlock
+                    Margin="0,4,0,0"
+                    FontSize="14"
+                    Foreground="#6B7280"
+                    Text="Manage and View All Store Products" />
+            </StackPanel>
+
+            <Button
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Click="addProductBtn_Click"
+                Style="{StaticResource AccentButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Margin="0,0,5,0" Symbol="Add" />
+                    <TextBlock Text="Add Product" />
                 </StackPanel>
-            </Grid>
-
-            <Grid Grid.Column="1">
-                <TextBox
-                    Width="350"
-                    Height="35"
-                    HorizontalAlignment="Left"
-                    PlaceholderText="Search products here" />
-
-                <!--  Add Product Button  -->
-                <Button
-                    HorizontalAlignment="Right"
-                    Click="addProductBtn_Click"
-                    Style="{StaticResource AccentButtonStyle}">
-                    <Button.Content>
-                        <StackPanel Orientation="Horizontal">
-                            <SymbolIcon Margin="0,0,5,0" Symbol="Add" />
-                            <TextBlock Text="Add Product" />
-                        </StackPanel>
-                    </Button.Content>
-                </Button>
-            </Grid>
+            </Button>
         </Grid>
 
-        <Grid Grid.Row="1" Margin="20,10">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <!--  Search and Filter Section  -->
+        <Grid
+            Grid.Row="1"
+            Margin="20,10"
+            Padding="16"
+            Background="White"
+            CornerRadius="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-            <!--  DataGrid Container  -->
+            <!--  Filter Type  -->
+            <ComboBox
+                x:Name="FilterTypeComboBox"
+                Grid.Column="0"
+                Width="150"
+                Header="Filter By"
+                PlaceholderText="Select..."
+                SelectionChanged="FilterTypeComboBox_SelectionChanged">
+                <ComboBoxItem Content="All" IsSelected="True" />
+                <ComboBoxItem Content="Name" />
+                <ComboBoxItem Content="Category" />
+            </ComboBox>
+
+            <!--  Search Box  -->
+            <TextBox
+                x:Name="SearchTextBox"
+                Grid.Column="1"
+                Margin="10,0,0,0"
+                Header="Search"
+                PlaceholderText="Type to search..."
+                TextChanged="SearchTextBox_TextChanged" />
+
+            <!--  Sort By  -->
+            <ComboBox
+                x:Name="SortByComboBox"
+                Grid.Column="2"
+                Width="150"
+                Margin="10,0,0,0"
+                Header="Sort By"
+                PlaceholderText="Select..."
+                SelectionChanged="SortByComboBox_SelectionChanged">
+                <ComboBoxItem Content="None" IsSelected="True" />
+                <ComboBoxItem Content="Name (A-Z)" />
+                <ComboBoxItem Content="Name (Z-A)" />
+            </ComboBox>
+
+            <!--  Page Size  -->
+            <ComboBox
+                x:Name="PageSizeComboBox"
+                Grid.Column="3"
+                Width="100"
+                Margin="10,0,0,0"
+                Header="Per Page"
+                SelectionChanged="PageSizeComboBox_SelectionChanged">
+                <ComboBoxItem Content="10" />
+                <ComboBoxItem Content="25" IsSelected="True" />
+                <ComboBoxItem Content="50" />
+                <ComboBoxItem Content="100" />
+            </ComboBox>
+
+            <!--  Clear Filters  -->
+            <Button
+                Grid.Column="4"
+                Margin="10,24,0,0"
+                Click="ClearFilters_Click"
+                Content="Clear" />
+        </Grid>
+
+        <!--  Products Table  -->
+        <Grid Grid.Row="2" Margin="20,10">
             <Border
-                Grid.Row="1"
                 Padding="1"
                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -90,51 +146,38 @@
                         <Grid
                             Grid.Row="0"
                             Padding="16,12"
-                            Background="#F8F9FA"
-                            BorderBrush="#E0E0E0">
+                            Background="#F8F9FA">
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1.5*" />
                             </Grid.ColumnDefinitions>
 
                             <TextBlock
                                 Grid.Column="0"
-                                VerticalAlignment="Center"
-                                FontWeight="SemiBold"
-                                Text="Product ID" />
-                            <TextBlock
-                                Grid.Column="1"
-                                VerticalAlignment="Center"
                                 FontWeight="SemiBold"
                                 Text="Product Name" />
                             <TextBlock
-                                Grid.Column="2"
-                                VerticalAlignment="Center"
+                                Grid.Column="1"
                                 FontWeight="SemiBold"
                                 Text="Category" />
                             <TextBlock
-                                Grid.Column="3"
-                                VerticalAlignment="Center"
+                                Grid.Column="2"
                                 FontWeight="SemiBold"
                                 Text="Quantity" />
                             <TextBlock
-                                Grid.Column="4"
-                                VerticalAlignment="Center"
+                                Grid.Column="3"
                                 FontWeight="SemiBold"
-                                Text="Unit Price (Rs.)" />
+                                Text="Price (Rs.)" />
                             <TextBlock
-                                Grid.Column="5"
-                                VerticalAlignment="Center"
+                                Grid.Column="4"
                                 FontWeight="SemiBold"
                                 Text="Image" />
                             <TextBlock
-                                Grid.Column="6"
-                                VerticalAlignment="Center"
+                                Grid.Column="5"
                                 FontWeight="SemiBold"
                                 Text="Actions" />
                         </Grid>
@@ -144,82 +187,63 @@
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="models:Products">
                                     <Border
-                                        Grid.Row="1"
                                         Padding="16,12"
-                                        BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                        BorderBrush="#E0E0E0"
                                         BorderThickness="0,0,0,1">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2*" />
                                                 <ColumnDefinition Width="1*" />
                                                 <ColumnDefinition Width="1*" />
                                                 <ColumnDefinition Width="1*" />
                                                 <ColumnDefinition Width="1*" />
-                                                <ColumnDefinition Width="1*" />
-                                                <ColumnDefinition Width="1*" />
-                                                <ColumnDefinition Width="1*" />
+                                                <ColumnDefinition Width="1.5*" />
                                             </Grid.ColumnDefinitions>
 
                                             <TextBlock
                                                 Grid.Column="0"
-                                                MaxWidth="150"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Text="{x:Bind Id}" />
-                                            <TextBlock
-                                                Grid.Column="1"
-                                                MaxWidth="150"
-                                                HorizontalAlignment="Left"
                                                 VerticalAlignment="Center"
                                                 FontWeight="Medium"
-                                                Text="{x:Bind Name}" />
-                                            <Border
-                                                Grid.Column="2"
-                                                Padding="8,4"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                CornerRadius="4">
-                                                <TextBlock Text="{x:Bind Category}" />
-                                            </Border>
+                                                Text="{x:Bind Name}"
+                                                TextWrapping="Wrap" />
                                             <TextBlock
-                                                Grid.Column="3"
+                                                Grid.Column="1"
+                                                VerticalAlignment="Center"
+                                                Text="{x:Bind Category}" />
+                                            <TextBlock
+                                                Grid.Column="2"
                                                 VerticalAlignment="Center"
                                                 Text="{x:Bind Quantity}" />
                                             <TextBlock
-                                                Grid.Column="4"
+                                                Grid.Column="3"
                                                 VerticalAlignment="Center"
                                                 FontWeight="SemiBold"
                                                 Text="{x:Bind Price}" />
                                             <Border
-                                                Grid.Column="5"
-                                                Width="60"
-                                                Height="40"
-                                                HorizontalAlignment="Left"
+                                                Grid.Column="4"
+                                                Width="50"
+                                                Height="50"
                                                 VerticalAlignment="Center"
                                                 Background="#E3E3E3"
                                                 CornerRadius="4">
-                                                <Image
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Source="{x:Bind ImageUrl}" />
+                                                <Image Source="{x:Bind ImageUrl}" Stretch="UniformToFill" />
                                             </Border>
                                             <StackPanel
-                                                Grid.Column="6"
+                                                Grid.Column="5"
                                                 VerticalAlignment="Center"
                                                 Orientation="Horizontal"
                                                 Spacing="8">
                                                 <Button
-                                                    Padding="12,6"
+                                                    Padding="10,6"
                                                     Click="EditProduct_Click"
                                                     Content="Edit"
-                                                    DataContext="{x:Bind}"
                                                     FontSize="12"
                                                     Style="{StaticResource AccentButtonStyle}"
                                                     Tag="{x:Bind}" />
                                                 <Button
-                                                    Padding="12,6"
+                                                    Padding="10,6"
                                                     Click="DeleteProduct_Click"
                                                     Content="Delete"
-                                                    DataContext="{x:Bind}"
                                                     FontSize="12"
                                                     Tag="{x:Bind}">
                                                     <Button.Resources>
@@ -238,6 +262,47 @@
                     </Grid>
                 </ScrollViewer>
             </Border>
+        </Grid>
+
+        <!--  Pagination Controls  -->
+        <Grid
+            Grid.Row="3"
+            Margin="20,10"
+            Padding="16"
+            Background="White"
+            CornerRadius="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button
+                x:Name="PreviousPageButton"
+                Grid.Column="0"
+                Click="PreviousPage_Click"
+                Content="← Previous"
+                IsEnabled="False" />
+
+            <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="8">
+                <TextBlock VerticalAlignment="Center" Text="Page" />
+                <TextBlock
+                    x:Name="CurrentPageText"
+                    VerticalAlignment="Center"
+                    FontWeight="Bold"
+                    Text="1" />
+            </StackPanel>
+
+            <Button
+                x:Name="NextPageButton"
+                Grid.Column="2"
+                Click="NextPage_Click"
+                Content="Next →" />
         </Grid>
     </Grid>
 </Page>

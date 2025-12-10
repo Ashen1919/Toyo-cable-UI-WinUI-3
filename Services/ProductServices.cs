@@ -80,25 +80,49 @@ namespace Toyo_cable_UI.Services
         }
 
         // get all products
-        public async Task<List<Products>?> GetProductsAsync()
+        public async Task<List<Products>?> GetProductsAsync(
+                    string? filterOn = null,
+                    string? filterQuery = null,
+                    string? sortBy = null,
+                    bool isAscending = true,
+                    int pageNumber = 1,
+                    int pageSize = 1000)
         {
             try
             {
-                var response = await _httpClient.GetAsync(ApiEndpoints.Products);
+                // Build query string
+                var queryParams = new List<string>();
+
+                if (!string.IsNullOrEmpty(filterOn))
+                    queryParams.Add($"filterOn={Uri.EscapeDataString(filterOn)}");
+
+                if (!string.IsNullOrEmpty(filterQuery))
+                    queryParams.Add($"filterQuery={Uri.EscapeDataString(filterQuery)}");
+
+                if (!string.IsNullOrEmpty(sortBy))
+                    queryParams.Add($"sortBy={Uri.EscapeDataString(sortBy)}");
+
+                queryParams.Add($"isAscending={isAscending}");
+                queryParams.Add($"pageNumber={pageNumber}");
+                queryParams.Add($"pageSize={pageSize}");
+
+                var queryString = string.Join("&", queryParams);
+                var url = $"{ApiEndpoints.Products}?{queryString}";
+
+                var response = await _httpClient.GetAsync(url);
 
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadFromJsonAsync<List<Products>>();
                 }
+
                 return null;
-                
             }
-            catch(Exception ex)
+            catch (Exception)
             {
                 return null;
             }
         }
-
         // update product
         public async Task<Products?> UpdateProductAsync(Guid id ,Products? product)
         {
