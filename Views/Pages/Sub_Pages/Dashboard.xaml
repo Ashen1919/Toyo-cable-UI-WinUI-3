@@ -499,7 +499,7 @@
                                             FontSize="12"
                                             FontWeight="SemiBold"
                                             Foreground="#666666"
-                                            Text="Revenue" />
+                                            Text="Revenue (Rs.)" />
                                     </Grid>
 
                                     <!--  Dynamic Table Rows  -->
