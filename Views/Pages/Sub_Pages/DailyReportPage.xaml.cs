@@ -1,12 +1,17 @@
 using Microsoft.UI.Xaml.Controls;
 using ScottPlot;
 using System;
+using System.Diagnostics;
+using System.Linq;
+using Toyo_cable_UI.Services;
 
 
 namespace Toyo_cable_UI.Views.Pages.Sub_Pages;
 
 public sealed partial class DailyReportPage : Page
 {
+    private readonly OrderService _orderService;
+
     public DailyReportPage()
     {
         InitializeComponent();
@@ -33,5 +38,45 @@ public sealed partial class DailyReportPage : Page
         MyPlotControl.UserInputProcessor.IsEnabled = false;
 
         MyPlotControl.Refresh();
+
+        // order service
+        _orderService = new OrderService();
+
+        LoadData();
+    }
+
+    // load all card data
+    public async void LoadData()
+    {
+        var orders = await _orderService.GetOrdersAsync();
+
+        var today = DateTime.Now.Date;
+
+        var filteredOrder = orders
+            .Where(o => o.OrderTime.Date == today).ToList();
+
+        if( filteredOrder.Count > 0)
+        {
+            DailyTotalOrdersText.Text = filteredOrder.Count.ToString();
+
+            DailyTotalRevenueText.Text = $"Rs. {filteredOrder.Sum(o => o.TotalAmount):N2}";
+
+            DailyAvgRevenueText.Text = $"Rs. {((filteredOrder.Sum(o => o.TotalAmount))/(filteredOrder.Count)):N2}";
+
+            var orderItems = filteredOrder.SelectMany(o => o.OrderItems).ToList();
+            if( orderItems.Count > 0 )
+            {
+                DailyTotalItemSoldText.Text = orderItems.Sum(oi => oi.Quantity).ToString();
+            }
+            else
+            {
+                Debug.WriteLine("order count is null");
+            }
+        }
+        else
+        {
+            Debug.WriteLine("Filter Products are null");
+        }
+        
     }
 }

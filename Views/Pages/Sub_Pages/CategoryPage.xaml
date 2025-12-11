@@ -41,11 +41,6 @@
             </StackPanel>
 
             <Grid Grid.Column="1">
-                <TextBox
-                    Width="350"
-                    Height="35"
-                    HorizontalAlignment="Left"
-                    PlaceholderText="Search Category here" />
                 <!--  Add category button  -->
                 <Button
                     HorizontalAlignment="Right"

@@ -21,6 +21,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <!--  Header Row  -->
@@ -61,16 +62,25 @@
 
             <!--  Categories section  -->
             <Grid Grid.Row="1" Margin="20,10">
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <ToggleButton Click="AllProduct_Click" Content="All Products" />
-                    <ItemsRepeater ItemsSource="{x:Bind Categories}">
-                        <ItemsRepeater.ItemTemplate>
-                            <DataTemplate x:DataType="models:Category">
-                                <ToggleButton Click="CategorySelect_Click" Content="{x:Bind Name}" />
-                            </DataTemplate>
-                        </ItemsRepeater.ItemTemplate>
-                    </ItemsRepeater>
-                </StackPanel>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Button Click="AllProduct_Click" Content="All Products" />
+                        <ItemsRepeater ItemsSource="{x:Bind Categories}">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Orientation="Horizontal" Spacing="5" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="models:Category">
+                                    <Button
+                                        Click="CategorySelect_Click"
+                                        Content="{x:Bind Name}"
+                                        DataContext="{x:Bind}"
+                                        Tag="{x:Bind}" />
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+                    </StackPanel>
+                </ScrollViewer>
             </Grid>
 
             <!--  Product Grid section  -->
@@ -169,6 +179,45 @@
                 </ItemsRepeater>
             </ScrollViewer>
 
+            <Grid
+                Grid.Row="3"
+                Margin="20,10"
+                Padding="16"
+                Background="White"
+                CornerRadius="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Button
+                    x:Name="PreviousPageButton"
+                    Grid.Column="0"
+                    Click="PreviousPage_Click"
+                    Content="← Previous"
+                    IsEnabled="False" />
+
+                <StackPanel
+                    Grid.Column="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <TextBlock VerticalAlignment="Center" Text="Page" />
+                    <TextBlock
+                        x:Name="CurrentPageText"
+                        VerticalAlignment="Center"
+                        FontWeight="Bold"
+                        Text="1" />
+                </StackPanel>
+
+                <Button
+                    x:Name="NextPageButton"
+                    Grid.Column="2"
+                    Click="NextPage_Click"
+                    Content="Next →" />
+            </Grid>
         </Grid>
 
         <!--  Column 02 - Cart Panel  -->

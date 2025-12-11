@@ -74,6 +74,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <!--  Total Sales Card  -->
@@ -94,11 +95,12 @@
                                 Foreground="#6B7280"
                                 Text="TOTAL SALES" />
                             <TextBlock
+                                x:Name="DailyTotalRevenueText"
                                 Margin="0,8,0,0"
                                 FontSize="28"
                                 FontWeight="Bold"
                                 Foreground="#1A1A2E"
-                                Text="Rs. 12,458.50" />
+                                Text="Rs. 0.00" />
                         </StackPanel>
                     </Border>
 
@@ -120,11 +122,12 @@
                                 Foreground="#6B7280"
                                 Text="AVERAGE SALE" />
                             <TextBlock
+                                x:Name="DailyAvgRevenueText"
                                 Margin="0,8,0,0"
                                 FontSize="28"
                                 FontWeight="Bold"
                                 Foreground="#1A1A2E"
-                                Text="Rs. 135.00" />
+                                Text="Rs. 0.00" />
                         </StackPanel>
                     </Border>
 
@@ -145,11 +148,38 @@
                                 Foreground="#6B7280"
                                 Text="ITEMS SOLD" />
                             <TextBlock
+                                x:Name="DailyTotalItemSoldText"
                                 Margin="0,8,0,0"
                                 FontSize="28"
                                 FontWeight="Bold"
                                 Foreground="#1A1A2E"
-                                Text="1,284" />
+                                Text="0" />
+                        </StackPanel>
+                    </Border>
+
+                    <!--  Items Sold Card  -->
+                    <Border
+                        Grid.Column="3"
+                        Padding="20"
+                        VerticalAlignment="Center"
+                        Background="White"
+                        CornerRadius="12">
+                        <Border.Shadow>
+                            <ThemeShadow />
+                        </Border.Shadow>
+                        <StackPanel>
+                            <TextBlock
+                                FontSize="13"
+                                FontWeight="Medium"
+                                Foreground="#6B7280"
+                                Text="TOTAL ORDERS" />
+                            <TextBlock
+                                x:Name="DailyTotalOrdersText"
+                                Margin="0,8,0,0"
+                                FontSize="28"
+                                FontWeight="Bold"
+                                Foreground="#1A1A2E"
+                                Text="0" />
                         </StackPanel>
                     </Border>
                 </Grid>
