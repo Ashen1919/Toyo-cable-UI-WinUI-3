@@ -5,12 +5,15 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Toyo_cable_UI.Models;
 using Toyo_cable_UI.Services;
+using Toyo_cable_UI.Helpers;
+using System.Threading.Tasks;
 
 namespace Toyo_cable_UI.Views.Pages.Sub_Pages;
 
 public sealed partial class viewOrderPage : Page
 {
     private readonly OrderService _orderService;
+    private readonly PrintService _printService; // Add this
     public ObservableCollection<Order> Orders { get; set; }
 
     // All orders cache
@@ -27,10 +30,14 @@ public sealed partial class viewOrderPage : Page
     private int pageSize = 10;
     private int totalPages = 1;
 
+    // Current order details for printing
+    private Order _currentOrderDetails;
+
     public viewOrderPage()
     {
         InitializeComponent();
         _orderService = new OrderService();
+        _printService = new PrintService(); // Initialize PrintService
         Orders = new ObservableCollection<Order>();
         allOrders = new List<Order>();
 
@@ -150,7 +157,7 @@ public sealed partial class viewOrderPage : Page
         }
     }
 
-    // Optional: Reset filters
+    // Reset filters
     private void ResetFilters_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         startDate = null;
@@ -161,5 +168,154 @@ public sealed partial class viewOrderPage : Page
         EndDatePicker.SelectedDate = null;
         currentPage = 1;
         ApplyFiltersAndPagination();
+    }
+
+    // View order details click handler
+    private async void ViewOrderDetails_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        if (button?.Tag is Guid orderId)
+        {
+            await ShowOrderDetailsDialog(orderId);
+        }
+    }
+
+    // Show order details dialog
+    private async Task ShowOrderDetailsDialog(Guid orderId)
+    {
+        try
+        {
+            // Fetch order details from API
+            var orderDetails = await _orderService.GetOrderByIdAsync(orderId);
+
+            if (orderDetails != null)
+            {
+                // Store current order for printing
+                _currentOrderDetails = orderDetails;
+
+                // Populate dialog with order information
+                DialogOrderId.Text = $"{orderDetails.Id}";
+                DialogOrderDate.Text = orderDetails.OrderTime.ToString("MMM dd, yyyy hh:mm tt");
+                DialogTotalItems.Text = $"{orderDetails.OrderItems?.Count ?? 0} items";
+                DialogSubTotal.Text = $"Rs. {orderDetails.SubTotal:N2}";
+                DialogDiscount.Text = orderDetails.Discount > 0
+                    ? $"- Rs. {orderDetails.Discount:N2}"
+                    : "Rs. 0.00";
+                DialogTotalAmount.Text = $"Rs. {orderDetails.TotalAmount:N2}";
+
+                // Populate order items
+                if (orderDetails.OrderItems != null && orderDetails.OrderItems.Count > 0)
+                {
+                    OrderItemsRepeater.ItemsSource = orderDetails.OrderItems;
+                }
+                else
+                {
+                    OrderItemsRepeater.ItemsSource = new List<OrderItems>();
+                }
+
+                // Show the dialog
+                await OrderDetailsDialog.ShowAsync();
+            }
+            else
+            {
+                // Show error dialog if order details not found
+                var errorDialog = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = "Unable to load order details. Please try again.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                await errorDialog.ShowAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Show error dialog on exception
+            var errorDialog = new ContentDialog
+            {
+                Title = "Error",
+                Content = $"An error occurred: {ex.Message}",
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot
+            };
+            await errorDialog.ShowAsync();
+        }
+    }
+
+    // Print order handler
+    private async void PrintOrder_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        // Don't prevent dialog from closing - we'll handle it differently
+        args.Cancel = false;
+
+        if (_currentOrderDetails == null)
+        {
+            return;
+        }
+
+        // Close the current dialog first
+        OrderDetailsDialog.Hide();
+
+        // Wait a bit for dialog to close
+        await Task.Delay(100);
+
+        try
+        {
+            // Show loading dialog
+            var loadingDialog = new ContentDialog
+            {
+                Title = "Generating PDF",
+                Content = new StackPanel
+                {
+                    Spacing = 10,
+                    Children =
+                    {
+                        new ProgressRing { IsActive = true, Width = 50, Height = 50 },
+                        new TextBlock { Text = "Please wait...", HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center }
+                    }
+                },
+                XamlRoot = this.XamlRoot
+            };
+
+            // Show loading dialog in background
+            var showTask = loadingDialog.ShowAsync();
+
+            // Generate PDF
+            string pdfPath = await _printService.GenerateOrderPdf(
+                _currentOrderDetails,
+                _currentOrderDetails.OrderItems != null ? _currentOrderDetails.OrderItems.ToList() : new List<OrderItems>()
+            );
+
+            // Close loading dialog
+            loadingDialog.Hide();
+
+            // Wait for dialog to close
+            await Task.Delay(100);
+
+            // Open the PDF
+            await _printService.OpenPdfAsync(pdfPath);
+
+        }
+        catch (Exception ex)
+        {
+            // Wait a bit to ensure previous dialog is closed
+            await Task.Delay(100);
+
+            // Show error message
+            var errorDialog = new ContentDialog
+            {
+                Title = "Error",
+                Content = $"Failed to generate PDF: {ex.Message}",
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot
+            };
+            await errorDialog.ShowAsync();
+        }
+    }
+
+    private void EditOrderDetails_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        // TODO: Implement edit functionality
     }
 }

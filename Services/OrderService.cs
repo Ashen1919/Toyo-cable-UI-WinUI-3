@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Toyo_cable_UI.Constants;
 using Toyo_cable_UI.Helpers;
@@ -120,6 +121,37 @@ namespace Toyo_cable_UI.Services
             }
             catch (Exception)
             {
+                return null;
+            }
+        }
+
+        // Add this method to your existing OrderService class
+
+        public async Task<Order?> GetOrderByIdAsync(Guid id)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync(ApiEndpoints.OrderWithId(id));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var order = JsonSerializer.Deserialize<Order>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                    return order;
+                }
+                else
+                {
+                    // Log error or handle unsuccessful response
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log exception
+                System.Diagnostics.Debug.WriteLine($"Error fetching order details: {ex.Message}");
                 return null;
             }
         }

@@ -9,334 +9,679 @@
     xmlns:models="using:Toyo_cable_UI.Models"
     mc:Ignorable="d">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-        <Grid RequestedTheme="Light">
+    <Grid>
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <Grid RequestedTheme="Light">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <!--  Header Row  -->
-            <Grid
-                Grid.Row="0"
-                Padding="30,20"
-                Background="White"
-                CornerRadius="0,0,12,12">
-                <StackPanel>
-                    <TextBlock
-                        FontSize="28"
-                        FontWeight="Bold"
-                        Foreground="#1A1A2E"
-                        Text="View Orders" />
-                    <TextBlock
-                        Margin="0,4,0,0"
-                        FontSize="14"
-                        Foreground="#6B7280"
-                        Text="Complete Order History Overview" />
-                </StackPanel>
-            </Grid>
+                <!--  Header Row  -->
+                <Grid
+                    Grid.Row="0"
+                    Padding="30,20"
+                    Background="White"
+                    CornerRadius="0,0,12,12">
+                    <StackPanel>
+                        <TextBlock
+                            FontSize="28"
+                            FontWeight="Bold"
+                            Foreground="#1A1A2E"
+                            Text="View Orders" />
+                        <TextBlock
+                            Margin="0,4,0,0"
+                            FontSize="14"
+                            Foreground="#6B7280"
+                            Text="Complete Order History Overview" />
+                    </StackPanel>
+                </Grid>
 
-            <!--  Filter & Search Section  -->
-            <Grid
-                Grid.Row="1"
-                Margin="0,20"
-                Padding="30,20"
-                Background="White"
-                CornerRadius="0,0,12,12">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="9*" />
-                </Grid.ColumnDefinitions>
-
-                <Grid Grid.Column="0" />
-
-                <!--  Filter Section  -->
-                <Grid Grid.Column="1" HorizontalAlignment="Right">
+                <!--  Filter & Search Section  -->
+                <Grid
+                    Grid.Row="1"
+                    Margin="0,20"
+                    Padding="30,20"
+                    Background="White"
+                    CornerRadius="0,0,12,12">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="2*" />
                         <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="9*" />
                     </Grid.ColumnDefinitions>
 
-                    <Grid Grid.Column="0">
-                        <!--  Start Date  -->
-                        <DatePicker
-                            x:Name="StartDatePicker"
-                            Grid.Column="1"
-                            Height="60"
-                            Margin="0,0,15,0">
-                            <DatePicker.Header>
-                                <TextBlock
-                                    FontSize="12"
-                                    FontWeight="SemiBold"
-                                    Text="Start Date" />
-                            </DatePicker.Header>
-                        </DatePicker>
-                    </Grid>
+                    <Grid Grid.Column="0" />
 
-                    <Grid Grid.Column="1">
-                        <!--  End Date  -->
-                        <DatePicker
-                            x:Name="EndDatePicker"
-                            Grid.Column="1"
-                            Height="60"
-                            Margin="0,0,15,0">
-                            <DatePicker.Header>
-                                <TextBlock
-                                    FontSize="12"
-                                    FontWeight="SemiBold"
-                                    Text="End Date" />
-                            </DatePicker.Header>
-                        </DatePicker>
-                    </Grid>
+                    <!--  Filter Section  -->
+                    <Grid Grid.Column="1" HorizontalAlignment="Right">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
 
-                    <Grid Grid.Column="2">
-                        <!--  Filter Button  -->
-                        <StackPanel
-                            HorizontalAlignment="Right"
-                            Orientation="Horizontal"
-                            Spacing="8">
-                            <Button
-                                x:Name="FilterButton"
-                                Grid.Column="3"
-                                Width="100"
-                                Height="40"
-                                Click="FilterButton_Click"
-                                Content="Filter"
-                                CornerRadius="5"
-                                Foreground="White"
-                                Style="{ThemeResource AccentButtonStyle}" />
-                            <Button
-                                x:Name="ResetButton"
-                                Width="100"
-                                Height="40"
-                                Click="ResetFilters_Click"
-                                Content="Reset"
-                                CornerRadius="5" />
-                        </StackPanel>
+                        <Grid Grid.Column="0">
+                            <!--  Start Date  -->
+                            <DatePicker
+                                x:Name="StartDatePicker"
+                                Grid.Column="1"
+                                Height="60"
+                                Margin="0,0,15,0">
+                                <DatePicker.Header>
+                                    <TextBlock
+                                        FontSize="12"
+                                        FontWeight="SemiBold"
+                                        Text="Start Date" />
+                                </DatePicker.Header>
+                            </DatePicker>
+                        </Grid>
+
+                        <Grid Grid.Column="1">
+                            <!--  End Date  -->
+                            <DatePicker
+                                x:Name="EndDatePicker"
+                                Grid.Column="1"
+                                Height="60"
+                                Margin="0,0,15,0">
+                                <DatePicker.Header>
+                                    <TextBlock
+                                        FontSize="12"
+                                        FontWeight="SemiBold"
+                                        Text="End Date" />
+                                </DatePicker.Header>
+                            </DatePicker>
+                        </Grid>
+
+                        <Grid Grid.Column="2">
+                            <!--  Filter Button  -->
+                            <StackPanel
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal"
+                                Spacing="8">
+                                <Button
+                                    x:Name="FilterButton"
+                                    Grid.Column="3"
+                                    Width="100"
+                                    Height="40"
+                                    Click="FilterButton_Click"
+                                    Content="Filter"
+                                    CornerRadius="5"
+                                    Foreground="White"
+                                    Style="{ThemeResource AccentButtonStyle}" />
+                                <Button
+                                    x:Name="ResetButton"
+                                    Width="100"
+                                    Height="40"
+                                    Click="ResetFilters_Click"
+                                    Content="Reset"
+                                    CornerRadius="5" />
+                            </StackPanel>
+                        </Grid>
                     </Grid>
                 </Grid>
-            </Grid>
 
-            <!--  Table Content  -->
-            <Grid Grid.Row="2" Margin="20,0,20,20">
-                <Border
+                <!--  Table Content  -->
+                <Grid Grid.Row="2" Margin="20,0,20,20">
+                    <Border
+                        Background="White"
+                        BorderBrush="#E0E0E0"
+                        BorderThickness="1"
+                        CornerRadius="12">
+                        <Border.Shadow>
+                            <ThemeShadow />
+                        </Border.Shadow>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!--  Table Header  -->
+                            <Border
+                                Grid.Row="0"
+                                Padding="20,16"
+                                Background="#F8F9FA"
+                                BorderBrush="#E0E0E0"
+                                BorderThickness="0,0,0,1"
+                                CornerRadius="12,12,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Foreground="#1A1A1A"
+                                        Text="Order ID" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Foreground="#1A1A1A"
+                                        Text="Order Date" />
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Foreground="#1A1A1A"
+                                        Text="Sub Total(Rs.)" />
+                                    <TextBlock
+                                        Grid.Column="3"
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Foreground="#1A1A1A"
+                                        Text="Discount(Rs.)" />
+                                    <TextBlock
+                                        Grid.Column="4"
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Foreground="#1A1A1A"
+                                        Text="Total Amount(Rs.)" />
+                                    <TextBlock
+                                        Grid.Column="5"
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Foreground="#1A1A1A"
+                                        Text="Status" />
+                                    <TextBlock
+                                        Grid.Column="6"
+                                        HorizontalAlignment="Center"
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Foreground="#1A1A1A"
+                                        Text="Action" />
+                                </Grid>
+                            </Border>
+
+                            <!--  Table Rows with ScrollViewer  -->
+                            <ScrollViewer
+                                Grid.Row="1"
+                                HorizontalScrollBarVisibility="Disabled"
+                                VerticalScrollBarVisibility="Auto">
+                                <ItemsRepeater ItemsSource="{x:Bind Orders}">
+                                    <ItemsRepeater.ItemTemplate>
+                                        <DataTemplate x:DataType="models:Order">
+                                            <!--  Rows  -->
+                                            <Border
+                                                Padding="20,16"
+                                                BorderBrush="#F0F0F0"
+                                                BorderThickness="0,0,0,1">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2*" />
+                                                        <ColumnDefinition Width="1*" />
+                                                        <ColumnDefinition Width="1*" />
+                                                        <ColumnDefinition Width="1*" />
+                                                        <ColumnDefinition Width="1*" />
+                                                        <ColumnDefinition Width="1*" />
+                                                        <ColumnDefinition Width="1*" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock
+                                                        Grid.Column="0"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="13"
+                                                        FontWeight="Medium"
+                                                        Foreground="#0078D4"
+                                                        Text="{x:Bind Id}" />
+                                                    <TextBlock
+                                                        Grid.Column="1"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="13"
+                                                        Foreground="#1A1A1A"
+                                                        Text="{x:Bind OrderTime}" />
+                                                    <TextBlock
+                                                        Grid.Column="2"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="13"
+                                                        Foreground="#666666"
+                                                        Text="{x:Bind SubTotal}" />
+                                                    <TextBlock
+                                                        Grid.Column="3"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="13"
+                                                        FontWeight="Medium"
+                                                        Foreground="#666666"
+                                                        Text="{x:Bind Discount}" />
+                                                    <TextBlock
+                                                        Grid.Column="4"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="13"
+                                                        FontWeight="Medium"
+                                                        Foreground="#1A1A1A"
+                                                        Text="{x:Bind TotalAmount}" />
+                                                    <Border
+                                                        Grid.Column="5"
+                                                        Padding="12,6"
+                                                        HorizontalAlignment="Left"
+                                                        VerticalAlignment="Center"
+                                                        Background="#E7F5E9"
+                                                        CornerRadius="6">
+                                                        <TextBlock
+                                                            FontSize="12"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="#2E7D32"
+                                                            Text="Completed" />
+                                                    </Border>
+                                                    <StackPanel
+                                                        Grid.Column="6"
+                                                        Orientation="Horizontal"
+                                                        Spacing="7">
+                                                        <Button
+                                                            Width="60"
+                                                            Height="30"
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            BorderThickness="0"
+                                                            Click="ViewOrderDetails_Click"
+                                                            Content="View"
+                                                            CornerRadius="6"
+                                                            FontSize="13"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="White"
+                                                            Style="{ThemeResource AccentButtonStyle}"
+                                                            Tag="{x:Bind Id}" />
+                                                        <Button
+                                                            Width="60"
+                                                            Height="30"
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            BorderThickness="0"
+                                                            Click="EditOrderDetails_Click"
+                                                            Content="Edit"
+                                                            CornerRadius="6"
+                                                            FontSize="13"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="White"
+                                                            Style="{ThemeResource AccentButtonStyle}"
+                                                            Tag="{x:Bind Id}" />
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsRepeater.ItemTemplate>
+                                </ItemsRepeater>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!--  Pagination Controls  -->
+                <Grid
+                    Grid.Row="3"
+                    Margin="20,10"
+                    Padding="16"
                     Background="White"
-                    BorderBrush="#E0E0E0"
-                    BorderThickness="1"
-                    CornerRadius="12">
-                    <Border.Shadow>
-                        <ThemeShadow />
-                    </Border.Shadow>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
+                    CornerRadius="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                        <!--  Table Header  -->
-                        <Border
-                            Grid.Row="0"
-                            Padding="20,16"
-                            Background="#F8F9FA"
-                            BorderBrush="#E0E0E0"
-                            BorderThickness="0,0,0,1"
-                            CornerRadius="12,12,0,0">
-                            <Grid>
+                    <Button
+                        x:Name="PreviousPageButton"
+                        Grid.Column="0"
+                        Click="PreviousPage_Click"
+                        Content="← Previous"
+                        IsEnabled="False" />
+
+                    <StackPanel
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <TextBlock VerticalAlignment="Center" Text="Page" />
+                        <TextBlock
+                            x:Name="CurrentPageText"
+                            VerticalAlignment="Center"
+                            FontWeight="Bold"
+                            Text="1 of 1" />
+                    </StackPanel>
+
+                    <Button
+                        x:Name="NextPageButton"
+                        Grid.Column="2"
+                        Click="NextPage_Click"
+                        Content="Next →" />
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+
+        <!--  Order Details Dialog  -->
+        <ContentDialog
+            x:Name="OrderDetailsDialog"
+            Title="Order Details"
+            CloseButtonText="Close"
+            DefaultButton="Close"
+            PrimaryButtonClick="PrintOrder_Click"
+            PrimaryButtonText="Print">
+            <ContentDialog.Resources>
+                <x:Double x:Key="ContentDialogMaxWidth">800</x:Double>
+                <x:Double x:Key="ContentDialogMinWidth">700</x:Double>
+            </ContentDialog.Resources>
+            <ContentDialog.TitleTemplate>
+                <DataTemplate>
+                    <Grid Height="50" Padding="0,8">
+                        <StackPanel
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="10">
+                            <StackPanel>
+                                <TextBlock
+                                    FontSize="20"
+                                    FontWeight="Bold"
+                                    Foreground="#1A1A2E"
+                                    Text="Order Details" />
+                                <TextBlock
+                                    x:Name="DialogOrderId"
+                                    Margin="0,4,0,0"
+                                    FontSize="12"
+                                    Foreground="#6B7280" />
+                            </StackPanel>
+                            <Border
+                                Padding="12,6"
+                                VerticalAlignment="Center"
+                                Background="#E7F5E9"
+                                CornerRadius="6">
+                                <TextBlock
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
+                                    Foreground="#2E7D32"
+                                    Text="Completed" />
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ContentDialog.TitleTemplate>
+
+            <ScrollViewer
+                Width="700"
+                MaxHeight="600"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto">
+                <StackPanel Spacing="20">
+                    <!--  Order Summary Card  -->
+                    <Border
+                        Padding="20"
+                        Background="#F8F9FA"
+                        CornerRadius="8">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock
+                                Grid.Row="0"
+                                Margin="0,0,0,12"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Foreground="#1A1A2E"
+                                Text="Order Summary" />
+
+                            <Grid Grid.Row="1">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="2*" />
-                                    <ColumnDefinition Width="1*" />
-                                    <ColumnDefinition Width="1*" />
-                                    <ColumnDefinition Width="1*" />
-                                    <ColumnDefinition Width="1*" />
-                                    <ColumnDefinition Width="1*" />
-                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
 
+                                <StackPanel
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Spacing="8">
+                                    <TextBlock
+                                        FontSize="11"
+                                        Foreground="#6B7280"
+                                        Text="Order ID" />
+                                    <TextBlock
+                                        x:Name="DialogOrderId"
+                                        FontSize="13"
+                                        FontWeight="Medium"
+                                        Foreground="#1A1A2E" />
+                                </StackPanel>
+                                <StackPanel
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Spacing="8">
+                                    <TextBlock
+                                        FontSize="11"
+                                        Foreground="#6B7280"
+                                        Text="Order Date" />
+                                    <TextBlock
+                                        x:Name="DialogOrderDate"
+                                        FontSize="13"
+                                        FontWeight="Medium"
+                                        Foreground="#1A1A2E" />
+                                </StackPanel>
+
+                                <StackPanel
+                                    Grid.Row="0"
+                                    Grid.Column="2"
+                                    Spacing="8">
+                                    <TextBlock
+                                        FontSize="11"
+                                        Foreground="#6B7280"
+                                        Text="Total Items" />
+                                    <TextBlock
+                                        x:Name="DialogTotalItems"
+                                        FontSize="13"
+                                        FontWeight="Medium"
+                                        Foreground="#1A1A2E" />
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <!--  Order Items  -->
+                    <StackPanel Spacing="12">
+                        <TextBlock
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="#1A1A2E"
+                            Text="Order Items" />
+
+                        <Border
+                            BorderBrush="#E0E0E0"
+                            BorderThickness="1"
+                            CornerRadius="8">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!--  Items Header  -->
+                                <Border
+                                    Grid.Row="0"
+                                    Padding="16,12"
+                                    Background="#F8F9FA"
+                                    BorderBrush="#E0E0E0"
+                                    BorderThickness="0,0,0,1"
+                                    CornerRadius="8,8,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="3*" />
+                                            <ColumnDefinition Width="1*" />
+                                            <ColumnDefinition Width="1.5*" />
+                                            <ColumnDefinition Width="1.5*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Foreground="#1A1A1A"
+                                            Text="Product" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Center"
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Foreground="#1A1A1A"
+                                            Text="Qty" />
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            HorizontalAlignment="Right"
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Foreground="#1A1A1A"
+                                            Text="Unit Price" />
+                                        <TextBlock
+                                            Grid.Column="3"
+                                            HorizontalAlignment="Right"
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Foreground="#1A1A1A"
+                                            Text="Total" />
+                                    </Grid>
+                                </Border>
+
+                                <!--  Items List  -->
+                                <ItemsRepeater
+                                    x:Name="OrderItemsRepeater"
+                                    Grid.Row="1"
+                                    Margin="0,0,0,0">
+                                    <ItemsRepeater.ItemTemplate>
+                                        <DataTemplate x:DataType="models:OrderItems">
+                                            <Border
+                                                Padding="16,12"
+                                                BorderBrush="#F0F0F0"
+                                                BorderThickness="0,0,0,1">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="3*" />
+                                                        <ColumnDefinition Width="1*" />
+                                                        <ColumnDefinition Width="1.5*" />
+                                                        <ColumnDefinition Width="1.5*" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock
+                                                        Grid.Column="0"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="13"
+                                                        Foreground="#1A1A2E"
+                                                        Text="{x:Bind ProductName}"
+                                                        TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock
+                                                        Grid.Column="1"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="13"
+                                                        Foreground="#666666"
+                                                        Text="{x:Bind Quantity}" />
+                                                    <TextBlock
+                                                        Grid.Column="2"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="13"
+                                                        Foreground="#666666"
+                                                        Text="{x:Bind UnitPrice, Mode=OneWay}" />
+                                                    <TextBlock
+                                                        Grid.Column="3"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="13"
+                                                        FontWeight="Medium"
+                                                        Foreground="#1A1A2E"
+                                                        Text="{x:Bind TotalPrice, Mode=OneWay}" />
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsRepeater.ItemTemplate>
+                                </ItemsRepeater>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+
+                    <!--  Order Totals  -->
+                    <Border
+                        Padding="20"
+                        Background="#F8F9FA"
+                        CornerRadius="8">
+                        <StackPanel Spacing="12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
                                 <TextBlock
                                     Grid.Column="0"
                                     FontSize="13"
-                                    FontWeight="SemiBold"
-                                    Foreground="#1A1A1A"
-                                    Text="Order ID" />
+                                    Foreground="#666666"
+                                    Text="Subtotal" />
                                 <TextBlock
+                                    x:Name="DialogSubTotal"
                                     Grid.Column="1"
                                     FontSize="13"
-                                    FontWeight="SemiBold"
-                                    Foreground="#1A1A1A"
-                                    Text="Order Date" />
-                                <TextBlock
-                                    Grid.Column="2"
-                                    FontSize="13"
-                                    FontWeight="SemiBold"
-                                    Foreground="#1A1A1A"
-                                    Text="Sub Total(Rs.)" />
-                                <TextBlock
-                                    Grid.Column="3"
-                                    FontSize="13"
-                                    FontWeight="SemiBold"
-                                    Foreground="#1A1A1A"
-                                    Text="Discount(Rs.)" />
-                                <TextBlock
-                                    Grid.Column="4"
-                                    FontSize="13"
-                                    FontWeight="SemiBold"
-                                    Foreground="#1A1A1A"
-                                    Text="Total Amount(Rs.)" />
-                                <TextBlock
-                                    Grid.Column="5"
-                                    FontSize="13"
-                                    FontWeight="SemiBold"
-                                    Foreground="#1A1A1A"
-                                    Text="Status" />
-                                <TextBlock
-                                    Grid.Column="6"
-                                    HorizontalAlignment="Center"
-                                    FontSize="13"
-                                    FontWeight="SemiBold"
-                                    Foreground="#1A1A1A"
-                                    Text="Action" />
+                                    FontWeight="Medium"
+                                    Foreground="#1A1A2E" />
                             </Grid>
-                        </Border>
 
-                        <!--  Table Rows with ScrollViewer  -->
-                        <ScrollViewer
-                            Grid.Row="1"
-                            HorizontalScrollBarVisibility="Disabled"
-                            VerticalScrollBarVisibility="Auto">
-                            <ItemsRepeater ItemsSource="{x:Bind Orders}">
-                                <ItemsRepeater.ItemTemplate>
-                                    <DataTemplate x:DataType="models:Order">
-                                        <!--  Rows  -->
-                                        <Border
-                                            Padding="20,16"
-                                            BorderBrush="#F0F0F0"
-                                            BorderThickness="0,0,0,1">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="2*" />
-                                                    <ColumnDefinition Width="1*" />
-                                                    <ColumnDefinition Width="1*" />
-                                                    <ColumnDefinition Width="1*" />
-                                                    <ColumnDefinition Width="1*" />
-                                                    <ColumnDefinition Width="1*" />
-                                                    <ColumnDefinition Width="1*" />
-                                                </Grid.ColumnDefinitions>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    FontSize="13"
+                                    Foreground="#666666"
+                                    Text="Discount" />
+                                <TextBlock
+                                    x:Name="DialogDiscount"
+                                    Grid.Column="1"
+                                    FontSize="13"
+                                    FontWeight="Medium"
+                                    Foreground="#DC2626" />
+                            </Grid>
 
-                                                <TextBlock
-                                                    Grid.Column="0"
-                                                    VerticalAlignment="Center"
-                                                    FontSize="13"
-                                                    FontWeight="Medium"
-                                                    Foreground="#0078D4"
-                                                    Text="{x:Bind Id}" />
-                                                <TextBlock
-                                                    Grid.Column="1"
-                                                    VerticalAlignment="Center"
-                                                    FontSize="13"
-                                                    Foreground="#1A1A1A"
-                                                    Text="{x:Bind OrderTime}" />
-                                                <TextBlock
-                                                    Grid.Column="2"
-                                                    VerticalAlignment="Center"
-                                                    FontSize="13"
-                                                    Foreground="#666666"
-                                                    Text="{x:Bind SubTotal}" />
-                                                <TextBlock
-                                                    Grid.Column="3"
-                                                    VerticalAlignment="Center"
-                                                    FontSize="13"
-                                                    FontWeight="Medium"
-                                                    Foreground="#666666"
-                                                    Text="{x:Bind Discount}" />
-                                                <TextBlock
-                                                    Grid.Column="4"
-                                                    VerticalAlignment="Center"
-                                                    FontSize="13"
-                                                    FontWeight="Medium"
-                                                    Foreground="#1A1A1A"
-                                                    Text="{x:Bind TotalAmount}" />
-                                                <Border
-                                                    Grid.Column="5"
-                                                    Padding="12,6"
-                                                    HorizontalAlignment="Left"
-                                                    VerticalAlignment="Center"
-                                                    Background="#E7F5E9"
-                                                    CornerRadius="6">
-                                                    <TextBlock
-                                                        FontSize="12"
-                                                        FontWeight="SemiBold"
-                                                        Foreground="#2E7D32"
-                                                        Text="Completed" />
-                                                </Border>
-                                                <Button
-                                                    Grid.Column="6"
-                                                    Width="80"
-                                                    Height="36"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    BorderThickness="0"
-                                                    Content="View"
-                                                    CornerRadius="6"
-                                                    FontSize="13"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="White"
-                                                    Style="{ThemeResource AccentButtonStyle}" />
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsRepeater.ItemTemplate>
-                            </ItemsRepeater>
-                        </ScrollViewer>
-                    </Grid>
-                </Border>
-            </Grid>
+                            <Border Height="1" Background="#E0E0E0" />
 
-            <!--  Pagination Controls  -->
-            <Grid
-                Grid.Row="3"
-                Margin="20,10"
-                Padding="16"
-                Background="White"
-                CornerRadius="8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <Button
-                    x:Name="PreviousPageButton"
-                    Grid.Column="0"
-                    Click="PreviousPage_Click"
-                    Content="← Previous"
-                    IsEnabled="False" />
-
-                <StackPanel
-                    Grid.Column="1"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="8">
-                    <TextBlock VerticalAlignment="Center" Text="Page" />
-                    <TextBlock
-                        x:Name="CurrentPageText"
-                        VerticalAlignment="Center"
-                        FontWeight="Bold"
-                        Text="1 of 1" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    FontSize="15"
+                                    FontWeight="Bold"
+                                    Foreground="#1A1A2E"
+                                    Text="Total Amount" />
+                                <TextBlock
+                                    x:Name="DialogTotalAmount"
+                                    Grid.Column="1"
+                                    FontSize="16"
+                                    FontWeight="Bold"
+                                    Foreground="#0078D4" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
-
-                <Button
-                    x:Name="NextPageButton"
-                    Grid.Column="2"
-                    Click="NextPage_Click"
-                    Content="Next →" />
-            </Grid>
-        </Grid>
-
-    </ScrollViewer>
-
+            </ScrollViewer>
+        </ContentDialog>
+        <!--  Hidden WebView2 for printing  -->
+        <WebView2
+            x:Name="PrintWebView"
+            Width="800"
+            Height="600"
+            Visibility="Collapsed" />
+    </Grid>
 </Page>
