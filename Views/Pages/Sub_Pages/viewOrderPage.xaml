@@ -261,6 +261,7 @@
                                                         Foreground="#1A1A1A"
                                                         Text="{x:Bind TotalAmount}" />
                                                     <Border
+                                                        x:Name="completeText"
                                                         Grid.Column="5"
                                                         Padding="12,6"
                                                         HorizontalAlignment="Left"
@@ -273,39 +274,21 @@
                                                             Foreground="#2E7D32"
                                                             Text="Completed" />
                                                     </Border>
-                                                    <StackPanel
+                                                    <Button
                                                         Grid.Column="6"
-                                                        Orientation="Horizontal"
-                                                        Spacing="7">
-                                                        <Button
-                                                            Width="60"
-                                                            Height="30"
-                                                            HorizontalAlignment="Center"
-                                                            VerticalAlignment="Center"
-                                                            BorderThickness="0"
-                                                            Click="ViewOrderDetails_Click"
-                                                            Content="View"
-                                                            CornerRadius="6"
-                                                            FontSize="13"
-                                                            FontWeight="SemiBold"
-                                                            Foreground="White"
-                                                            Style="{ThemeResource AccentButtonStyle}"
-                                                            Tag="{x:Bind Id}" />
-                                                        <Button
-                                                            Width="60"
-                                                            Height="30"
-                                                            HorizontalAlignment="Center"
-                                                            VerticalAlignment="Center"
-                                                            BorderThickness="0"
-                                                            Click="EditOrderDetails_Click"
-                                                            Content="Edit"
-                                                            CornerRadius="6"
-                                                            FontSize="13"
-                                                            FontWeight="SemiBold"
-                                                            Foreground="White"
-                                                            Style="{ThemeResource AccentButtonStyle}"
-                                                            Tag="{x:Bind Id}" />
-                                                    </StackPanel>
+                                                        Width="80"
+                                                        Height="36"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        BorderThickness="0"
+                                                        Click="ViewOrderDetails_Click"
+                                                        Content="View"
+                                                        CornerRadius="6"
+                                                        FontSize="13"
+                                                        FontWeight="SemiBold"
+                                                        Foreground="White"
+                                                        Style="{ThemeResource AccentButtonStyle}"
+                                                        Tag="{x:Bind Id}" />
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>
@@ -373,35 +356,46 @@
             </ContentDialog.Resources>
             <ContentDialog.TitleTemplate>
                 <DataTemplate>
-                    <Grid Height="50" Padding="0,8">
-                        <StackPanel
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal"
-                            Spacing="10">
-                            <StackPanel>
-                                <TextBlock
-                                    FontSize="20"
-                                    FontWeight="Bold"
-                                    Foreground="#1A1A2E"
-                                    Text="Order Details" />
-                                <TextBlock
-                                    x:Name="DialogOrderId"
-                                    Margin="0,4,0,0"
-                                    FontSize="12"
-                                    Foreground="#6B7280" />
-                            </StackPanel>
-                            <Border
-                                Padding="12,6"
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid
+                            Grid.Column="0"
+                            Height="50"
+                            Padding="0,8"
+                            HorizontalAlignment="Left">
+                            <StackPanel
+                                HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
-                                Background="#E7F5E9"
-                                CornerRadius="6">
-                                <TextBlock
-                                    FontSize="12"
-                                    FontWeight="SemiBold"
-                                    Foreground="#2E7D32"
-                                    Text="Completed" />
-                            </Border>
-                        </StackPanel>
+                                Orientation="Horizontal"
+                                Spacing="10">
+                                <StackPanel>
+                                    <TextBlock
+                                        FontSize="20"
+                                        FontWeight="Bold"
+                                        Foreground="#1A1A2E"
+                                        Text="Order Details" />
+                                    <TextBlock
+                                        x:Name="DialogOrderId"
+                                        Margin="0,4,0,0"
+                                        FontSize="12"
+                                        Foreground="#6B7280" />
+                                </StackPanel>
+                                <Border
+                                    Padding="12,6"
+                                    VerticalAlignment="Center"
+                                    Background="#E7F5E9"
+                                    CornerRadius="6">
+                                    <TextBlock
+                                        FontSize="12"
+                                        FontWeight="SemiBold"
+                                        Foreground="#2E7D32"
+                                        Text="Completed" />
+                                </Border>
+                            </StackPanel>
+                        </Grid>
                     </Grid>
                 </DataTemplate>
             </ContentDialog.TitleTemplate>
@@ -677,6 +671,7 @@
                 </StackPanel>
             </ScrollViewer>
         </ContentDialog>
+
         <!--  Hidden WebView2 for printing  -->
         <WebView2
             x:Name="PrintWebView"

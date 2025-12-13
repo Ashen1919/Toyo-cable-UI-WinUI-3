@@ -3,18 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Toyo_cable_UI.Models;
 using Toyo_cable_UI.Services;
-using Toyo_cable_UI.Helpers;
-using System.Threading.Tasks;
 
 namespace Toyo_cable_UI.Views.Pages.Sub_Pages;
 
 public sealed partial class viewOrderPage : Page
 {
     private readonly OrderService _orderService;
-    private readonly PrintService _printService; // Add this
+    private readonly PrintService _printService; 
     public ObservableCollection<Order> Orders { get; set; }
+    public ObservableCollection<CartItem> CartItems { get; set; }
 
     // All orders cache
     private List<Order> allOrders;
@@ -29,6 +29,9 @@ public sealed partial class viewOrderPage : Page
     private int currentPage = 1;
     private int pageSize = 10;
     private int totalPages = 1;
+    private decimal _subTotal;
+    private decimal _discount;
+    private decimal _totalPayment;
 
     // Current order details for printing
     private Order _currentOrderDetails;
@@ -37,7 +40,7 @@ public sealed partial class viewOrderPage : Page
     {
         InitializeComponent();
         _orderService = new OrderService();
-        _printService = new PrintService(); // Initialize PrintService
+        _printService = new PrintService(); 
         Orders = new ObservableCollection<Order>();
         allOrders = new List<Order>();
 
@@ -314,8 +317,4 @@ public sealed partial class viewOrderPage : Page
         }
     }
 
-    private void EditOrderDetails_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-    {
-        // TODO: Implement edit functionality
-    }
 }
