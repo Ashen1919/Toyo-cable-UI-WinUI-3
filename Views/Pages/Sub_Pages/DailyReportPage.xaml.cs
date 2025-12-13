@@ -1,82 +1,289 @@
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using ScottPlot;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using Toyo_cable_UI.Models;
 using Toyo_cable_UI.Services;
-
 
 namespace Toyo_cable_UI.Views.Pages.Sub_Pages;
 
 public sealed partial class DailyReportPage : Page
 {
     private readonly OrderService _orderService;
+    private readonly PrintServiceSales _printServiceSales;
+
+    public ObservableCollection<DailySalesData> DailySalesDataList { get; set; }
+
+    private DateTime _selectedDate = DateTime.Now.Date;
+
+    // Store current statistics for report generation
+    private int _currentTotalOrders = 0;
+    private decimal _currentTotalRevenue = 0;
+    private decimal _currentAvgRevenue = 0;
+    private int _currentTotalItemsSold = 0;
+
+    public ObservableCollection<DailySalesData> DailySalesDataLists { get; set; }
 
     public DailyReportPage()
     {
         InitializeComponent();
+
         TodayDateText.Text = "Today: " + DateTime.Now.ToString("dd/MM/yyyy");
 
-        // Axis AntiAliasing Graph
-        double[] monthlySales = { 12000, 15000, 18000, 14000, 20000, 25000 };
-
-        var bar = MyPlotControl.Plot.Add.Bars(monthlySales);
-
-        // Add month labels
-        MyPlotControl.Plot.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.NumericManual(
-            new Tick[]
-            {
-        new(0, "Acc. Cable"),
-        new(1, "Three-Wheel Cable"),
-        new(2, "Bike Cable"),
-        new(3, "Spark Plug"),
-        new(4, "Lights"),
-        new(5, "Side Mirror"),
-            });
-
-        //disable on-scroll zoom-in and zoom-out
-        MyPlotControl.UserInputProcessor.IsEnabled = false;
-
-        MyPlotControl.Refresh();
-
-        // order service
+        // Initialize services
         _orderService = new OrderService();
+        _printServiceSales = new PrintServiceSales();
 
-        LoadData();
+        // Initialize collections
+        DailySalesDataList = new ObservableCollection<DailySalesData>();
+
+        // Set today as default selected date
+        ReportCalendar.SelectedDates.Add(DateTime.Now);
+
+        // Load data
+        LoadData(_selectedDate);
     }
 
-    // load all card data
-    public async void LoadData()
+    private void SetEmptyState()
+    {
+        _currentTotalOrders = 0;
+        _currentTotalRevenue = 0;
+        _currentAvgRevenue = 0;
+        _currentTotalItemsSold = 0;
+
+        DailyTotalOrdersText.Text = "0";
+        DailyTotalRevenueText.Text = "Rs. 0.00";
+        DailyAvgRevenueText.Text = "Rs. 0.00";
+        DailyTotalItemSoldText.Text = "0";
+
+        DailySalesDataList.Clear();
+        InitializeEmptyGraph();
+    }
+
+    // Event: Calendar date selected
+    private void ReportCalendar_SelectedDatesChanged(CalendarView sender, CalendarViewSelectedDatesChangedEventArgs args)
+    {
+        // Get the selected date
+        if (args.AddedDates.Count > 0)
+        {
+            _selectedDate = args.AddedDates[0].Date;
+
+            // Update display
+            SelectedDateText.Text = $"Selected: {_selectedDate:dd/MM/yyyy}";
+
+            Debug.WriteLine($"Date selected: {_selectedDate:dd/MM/yyyy}");
+        }
+    }
+
+    // Event: Load button clicked
+    private void LoadDateButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        // Load data for selected date
+        LoadData(_selectedDate);
+    }
+
+    // Load data for specific date
+    public async void LoadData(DateTime selectedDate)
     {
         var orders = await _orderService.GetOrdersAsync();
 
-        var today = DateTime.Now.Date;
-
-        var filteredOrder = orders
-            .Where(o => o.OrderTime.Date == today).ToList();
-
-        if( filteredOrder.Count > 0)
+        if (orders == null || !orders.Any())
         {
-            DailyTotalOrdersText.Text = filteredOrder.Count.ToString();
+            Debug.WriteLine("No orders found");
+            SetEmptyState();
+            return;
+        }
 
-            DailyTotalRevenueText.Text = $"Rs. {filteredOrder.Sum(o => o.TotalAmount):N2}";
+        // Filter orders for selected date
+        var filteredOrders = orders
+            .Where(o => o.OrderTime.Date == selectedDate.Date)
+            .ToList();
 
-            DailyAvgRevenueText.Text = $"Rs. {((filteredOrder.Sum(o => o.TotalAmount))/(filteredOrder.Count)):N2}";
+        if (filteredOrders.Count > 0)
+        {
+            _currentTotalOrders = filteredOrders.Count;
+            _currentTotalRevenue = filteredOrders.Sum(o => o.TotalAmount);
+            _currentAvgRevenue = _currentTotalRevenue / _currentTotalOrders;
 
-            var orderItems = filteredOrder.SelectMany(o => o.OrderItems).ToList();
-            if( orderItems.Count > 0 )
+            var orderItems = filteredOrders
+                .SelectMany(o => o.OrderItems)
+                .Where(oi => oi != null)
+                .ToList();
+
+            _currentTotalItemsSold = orderItems.Sum(oi => oi.Quantity);
+
+            // Update cards
+            DailyTotalOrdersText.Text = _currentTotalOrders.ToString();
+            DailyTotalRevenueText.Text = $"Rs. {_currentTotalRevenue:N2}";
+            DailyAvgRevenueText.Text = $"Rs. {_currentAvgRevenue:N2}";
+            DailyTotalItemSoldText.Text = _currentTotalItemsSold.ToString();
+
+            // Calculate product sales data
+            var dailySalesData = CalculateDailySales(filteredOrders);
+
+            // Populate table
+            DailySalesDataList.Clear();
+            foreach (var item in dailySalesData)
             {
-                DailyTotalItemSoldText.Text = orderItems.Sum(oi => oi.Quantity).ToString();
+                DailySalesDataList.Add(item);
             }
-            else
-            {
-                Debug.WriteLine("order count is null");
-            }
+
+            // Update graph
+            UpdateSalesGraph(dailySalesData, selectedDate);
+
+            Debug.WriteLine($"Data loaded for {selectedDate:dd/MM/yyyy}");
+            Debug.WriteLine($"Stored stats - Orders: {_currentTotalOrders}, Revenue: {_currentTotalRevenue}");
         }
         else
         {
-            Debug.WriteLine("Filter Products are null");
+            Debug.WriteLine($"No orders for {selectedDate:dd/MM/yyyy}");
+            SetEmptyState();
         }
-        
+    }
+    // Calculate daily sales by product
+    private List<DailySalesData> CalculateDailySales(List<Order> orders)
+    {
+        var salesData = orders
+            .SelectMany(order => order.OrderItems)
+            .Where(item => item != null && !string.IsNullOrEmpty(item.ProductName))
+            .GroupBy(item => item.ProductName)
+            .Select(group => new DailySalesData
+            {
+                ProductName = group.Key,
+                TotalQuantitySold = group.Sum(item => item.Quantity),
+                TotalRevenue = group.Sum(item => item.TotalPrice),
+                OrderCount = group.Select(item => item.OrderId).Distinct().Count()
+            })
+            .OrderByDescending(data => data.TotalRevenue)
+            .ToList();
+
+        return salesData;
+    }
+
+    // Update the bar graph with date parameter
+    private void UpdateSalesGraph(List<DailySalesData> salesData, DateTime date)
+    {
+        MyPlotControl.Plot.Clear();
+
+        if (salesData == null || !salesData.Any())
+        {
+            InitializeEmptyGraph();
+            return;
+        }
+
+        double[] revenues = salesData.Select(s => (double)s.TotalRevenue).ToArray();
+        double[] positions = Enumerable.Range(0, salesData.Count).Select(i => (double)i).ToArray();
+        string[] productNames = salesData.Select(s => TruncateProductName(s.ProductName, 15)).ToArray();
+
+        var barPlot = MyPlotControl.Plot.Add.Bars(positions, revenues);
+
+        for (int i = 0; i < barPlot.Bars.Count; i++)
+        {
+            barPlot.Bars[i].Size = 0.8;
+            barPlot.Bars[i].FillColor = ScottPlot.Color.FromHex("#3B82F6");
+            barPlot.Bars[i].LineWidth = 0;
+        }
+
+        var ticks = positions.Select((pos, i) => new Tick(pos, productNames[i])).ToArray();
+        MyPlotControl.Plot.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.NumericManual(ticks);
+
+        MyPlotControl.Plot.Axes.Bottom.TickLabelStyle.Rotation = -45;
+        MyPlotControl.Plot.Axes.Bottom.TickLabelStyle.Alignment = ScottPlot.Alignment.MiddleRight;
+
+        MyPlotControl.Plot.Axes.Bottom.Label.Text = "Products";
+        MyPlotControl.Plot.Axes.Bottom.Label.FontSize = 14;
+        MyPlotControl.Plot.Axes.Left.Label.Text = "Revenue (Rs.)";
+        MyPlotControl.Plot.Axes.Left.Label.FontSize = 14;
+
+        MyPlotControl.Plot.Axes.SetLimitsX(-0.5, positions.Length - 0.5);
+
+        double maxRevenue = revenues.Max();
+        if (maxRevenue == 0) maxRevenue = 1000;
+        MyPlotControl.Plot.Axes.SetLimitsY(0, maxRevenue * 1.15);
+
+        MyPlotControl.Plot.Grid.MajorLineColor = ScottPlot.Color.FromHex("#E5E7EB");
+        MyPlotControl.Plot.Grid.MajorLineWidth = 1;
+
+        // Update title with selected date
+        MyPlotControl.Plot.Title($"Top Selling Products - {date:dd/MM/yyyy}");
+
+        MyPlotControl.UserInputProcessor.IsEnabled = false;
+        MyPlotControl.Refresh();
+    }
+
+    private void InitializeEmptyGraph()
+    {
+        MyPlotControl.Plot.Clear();
+
+        var text = MyPlotControl.Plot.Add.Text($"No sales data for {_selectedDate:dd/MM/yyyy}", 0.5, 0.5);
+        text.LabelFontSize = 16;
+        text.LabelFontColor = ScottPlot.Color.FromHex("#9CA3AF");
+        text.LabelAlignment = ScottPlot.Alignment.MiddleCenter;
+
+        MyPlotControl.Plot.Axes.SetLimitsX(0, 1);
+        MyPlotControl.Plot.Axes.SetLimitsY(0, 1);
+
+        MyPlotControl.Plot.HideGrid();
+        MyPlotControl.Plot.Layout.Frameless();
+
+        MyPlotControl.UserInputProcessor.IsEnabled = false;
+        MyPlotControl.Refresh();
+    }
+
+    private string TruncateProductName(string name, int maxLength)
+    {
+        if (string.IsNullOrEmpty(name)) return "Unknown";
+
+        return name.Length <= maxLength
+            ? name
+            : name.Substring(0, maxLength - 3) + "...";
+    }
+
+    private async void PrintReport_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        if (DailySalesDataList.Count == 0)
+        {
+            ContentDialog noDataDialog = new ContentDialog
+            {
+                Title = "No Data",
+                Content = "No sales data available for the selected date.",
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot
+            };
+            await noDataDialog.ShowAsync();
+            return;
+        }
+
+        try
+        {
+            var salesDataList = DailySalesDataList.ToList();
+
+            var pdfPath = await _printServiceSales.GenerateDailySalesReportPdf
+             (
+                reportDate: _selectedDate,
+                salesData: salesDataList,
+                totalOrders: _currentTotalOrders,
+                totalRevenue: _currentTotalRevenue,
+                avgRevenue: _currentAvgRevenue,
+                totalItemsSold: _currentTotalItemsSold
+            );
+
+            // Auto-open for printing
+            await _printServiceSales.OpenPdfAsync(pdfPath);
+        }
+        catch (Exception ex)
+        {
+            ContentDialog errorDialog = new ContentDialog
+            {
+                Title = "Error",
+                Content = $"Failed to print report: {ex.Message}",
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot
+            };
+            await errorDialog.ShowAsync();
+        }
     }
 }

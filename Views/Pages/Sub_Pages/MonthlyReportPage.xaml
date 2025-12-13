@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:Toyo_cable_UI.Views.Pages.Sub_Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Toyo_cable_UI.Models"
     mc:Ignorable="d">
 
     <Grid Background="#F5F7FA" RequestedTheme="Light">
@@ -45,10 +46,15 @@
                 Spacing="12">
                 <Button
                     Padding="16,8"
-                    Content="Generate Report"
-                    CornerRadius="6"
-                    Foreground="White"
-                    Style="{StaticResource AccentButtonStyle}" />
+                    Background="#10B981"
+                    Click="PrintReport_Click"
+                    Content="Print Report"
+                    CornerRadius="6">
+                    <Button.Resources>
+                        <SolidColorBrush x:Key="ButtonBackground" Color="#10B981" />
+                        <SolidColorBrush x:Key="ButtonForeground" Color="White" />
+                    </Button.Resources>
+                </Button>
             </StackPanel>
         </Grid>
 
@@ -62,7 +68,7 @@
                     Background="White"
                     CornerRadius="0,0,12,12">
                     <TextBlock
-                        x:Name="TodayMonthText"
+                        x:Name="MonthText"
                         FontSize="20"
                         FontWeight="Bold"
                         Foreground="#1A1A2E" />
@@ -71,6 +77,7 @@
                 <!--  Metrics Cards  -->
                 <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -94,11 +101,12 @@
                                 Foreground="#6B7280"
                                 Text="TOTAL SALES" />
                             <TextBlock
+                                x:Name="DailyTotalRevenueText"
                                 Margin="0,8,0,0"
                                 FontSize="28"
                                 FontWeight="Bold"
                                 Foreground="#1A1A2E"
-                                Text="Rs. 12,458.50" />
+                                Text="Rs. 0.00" />
                         </StackPanel>
                     </Border>
 
@@ -120,11 +128,12 @@
                                 Foreground="#6B7280"
                                 Text="AVERAGE SALE" />
                             <TextBlock
+                                x:Name="DailyAvgRevenueText"
                                 Margin="0,8,0,0"
                                 FontSize="28"
                                 FontWeight="Bold"
                                 Foreground="#1A1A2E"
-                                Text="Rs. 135.00" />
+                                Text="Rs. 0.00" />
                         </StackPanel>
                     </Border>
 
@@ -145,11 +154,38 @@
                                 Foreground="#6B7280"
                                 Text="ITEMS SOLD" />
                             <TextBlock
+                                x:Name="DailyTotalItemSoldText"
                                 Margin="0,8,0,0"
                                 FontSize="28"
                                 FontWeight="Bold"
                                 Foreground="#1A1A2E"
-                                Text="1,284" />
+                                Text="0" />
+                        </StackPanel>
+                    </Border>
+
+                    <!--  Items Sold Card  -->
+                    <Border
+                        Grid.Column="3"
+                        Padding="20"
+                        VerticalAlignment="Center"
+                        Background="White"
+                        CornerRadius="12">
+                        <Border.Shadow>
+                            <ThemeShadow />
+                        </Border.Shadow>
+                        <StackPanel>
+                            <TextBlock
+                                FontSize="13"
+                                FontWeight="Medium"
+                                Foreground="#6B7280"
+                                Text="TOTAL ORDERS" />
+                            <TextBlock
+                                x:Name="DailyTotalOrdersText"
+                                Margin="0,8,0,0"
+                                FontSize="28"
+                                FontWeight="Bold"
+                                Foreground="#1A1A2E"
+                                Text="0" />
                         </StackPanel>
                     </Border>
                 </Grid>
@@ -176,12 +212,12 @@
                                 FontSize="18"
                                 FontWeight="SemiBold"
                                 Foreground="#1A1A2E"
-                                Text="Daily Sales Trend" />
+                                Text="Monthly Sales Trend" />
                             <TextBlock
                                 Margin="0,4,0,20"
                                 FontSize="13"
                                 Foreground="#6B7280"
-                                Text="Sales distribution throughout the day" />
+                                Text="Sales distribution throughout the month" />
 
                             <!--  Chart Section  -->
                             <ScottPlot:WinUIPlot x:Name="MyPlotControl" Height="350" />
@@ -250,211 +286,113 @@
                     </Border>
                 </Grid>
 
-                <!--  Top Products  -->
+                <!--  Sales Data Table  -->
                 <Border
-                    Padding="24"
+                    Margin="20"
+                    Padding="20"
                     Background="White"
                     CornerRadius="12">
-                    <Border.Shadow>
-                        <ThemeShadow />
-                    </Border.Shadow>
                     <StackPanel>
-                        <Grid Margin="0,0,0,20">
-                            <TextBlock
-                                FontSize="18"
-                                FontWeight="SemiBold"
-                                Foreground="#1A1A2E"
-                                Text="Top Selling Products" />
-                        </Grid>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Text="Top Selling Products Monthly" />
 
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
                             <!--  Table Header  -->
-                            <Border
+                            <Grid
                                 Grid.Row="0"
-                                Padding="16,12"
-                                Background="#F9FAFB"
-                                CornerRadius="8">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="2*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock
-                                        Grid.Column="0"
-                                        FontSize="13"
-                                        FontWeight="SemiBold"
-                                        Foreground="#6B7280"
-                                        Text="PRODUCT NAME" />
-                                    <TextBlock
-                                        Grid.Column="1"
-                                        FontSize="13"
-                                        FontWeight="SemiBold"
-                                        Foreground="#6B7280"
-                                        Text="QTY SOLD" />
-                                    <TextBlock
-                                        Grid.Column="2"
-                                        FontSize="13"
-                                        FontWeight="SemiBold"
-                                        Foreground="#6B7280"
-                                        Text="REVENUE" />
-                                </Grid>
-                            </Border>
+                                Padding="12"
+                                Background="#F8F9FA"
+                                CornerRadius="8,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="3*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1.5*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
 
-                            <!--  Table Rows  -->
-                            <StackPanel Grid.Row="1" Margin="0,8,0,0">
-                                <!--  Row 1  -->
-                                <Border
-                                    Padding="16,12"
-                                    BorderBrush="#E5E7EB"
-                                    BorderThickness="0,0,0,1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            FontSize="14"
-                                            Foreground="#1A1A2E"
-                                            Text="Cable Wire 2.5mm" />
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            FontSize="14"
-                                            Foreground="#374151"
-                                            Text="145" />
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            FontSize="14"
-                                            FontWeight="SemiBold"
-                                            Foreground="#1A1A2E"
-                                            Text="$2,175.00" />
-                                    </Grid>
-                                </Border>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    FontWeight="SemiBold"
+                                    Text="Product Name" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    FontWeight="SemiBold"
+                                    Text="Qty Sold"
+                                    TextAlignment="Center" />
+                                <TextBlock
+                                    Grid.Column="2"
+                                    FontWeight="SemiBold"
+                                    Text="Revenue"
+                                    TextAlignment="Right" />
+                                <TextBlock
+                                    Grid.Column="3"
+                                    FontWeight="SemiBold"
+                                    Text="Orders"
+                                    TextAlignment="Center" />
+                            </Grid>
 
-                                <!--  Row 2  -->
-                                <Border
-                                    Padding="16,12"
-                                    BorderBrush="#E5E7EB"
-                                    BorderThickness="0,0,0,1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            FontSize="14"
-                                            Foreground="#1A1A2E"
-                                            Text="Power Extension 3m" />
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            FontSize="14"
-                                            Foreground="#374151"
-                                            Text="98" />
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            FontSize="14"
-                                            FontWeight="SemiBold"
-                                            Foreground="#1A1A2E"
-                                            Text="$1,470.00" />
-                                    </Grid>
-                                </Border>
+                            <!--  Table Data  -->
+                            <ScrollViewer
+                                Grid.Row="1"
+                                MaxHeight="400"
+                                VerticalScrollBarVisibility="Auto">
+                                <ItemsRepeater ItemsSource="{x:Bind MonthlySalesDataList}">
+                                    <ItemsRepeater.ItemTemplate>
+                                        <DataTemplate x:DataType="models:DailySalesData">
+                                            <Border
+                                                Padding="12"
+                                                BorderBrush="#E0E0E0"
+                                                BorderThickness="0,0,0,1">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="3*" />
+                                                        <ColumnDefinition Width="1*" />
+                                                        <ColumnDefinition Width="1.5*" />
+                                                        <ColumnDefinition Width="1*" />
+                                                    </Grid.ColumnDefinitions>
 
-                                <!--  Row 3  -->
-                                <Border
-                                    Padding="16,12"
-                                    BorderBrush="#E5E7EB"
-                                    BorderThickness="0,0,0,1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            FontSize="14"
-                                            Foreground="#1A1A2E"
-                                            Text="Circuit Breaker 20A" />
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            FontSize="14"
-                                            Foreground="#374151"
-                                            Text="76" />
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            FontSize="14"
-                                            FontWeight="SemiBold"
-                                            Foreground="#1A1A2E"
-                                            Text="$1,140.00" />
-                                    </Grid>
-                                </Border>
+                                                    <TextBlock
+                                                        Grid.Column="0"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind ProductName}"
+                                                        TextWrapping="Wrap" />
 
-                                <!--  Row 4  -->
-                                <Border
-                                    Padding="16,12"
-                                    BorderBrush="#E5E7EB"
-                                    BorderThickness="0,0,0,1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            FontSize="14"
-                                            Foreground="#1A1A2E"
-                                            Text="LED Bulb 9W" />
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            FontSize="14"
-                                            Foreground="#374151"
-                                            Text="62" />
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            FontSize="14"
-                                            FontWeight="SemiBold"
-                                            Foreground="#1A1A2E"
-                                            Text="$930.00" />
-                                    </Grid>
-                                </Border>
+                                                    <TextBlock
+                                                        Grid.Column="1"
+                                                        VerticalAlignment="Center"
+                                                        FontWeight="SemiBold"
+                                                        Text="{x:Bind TotalQuantitySold}"
+                                                        TextAlignment="Center" />
 
-                                <!--  Row 5  -->
-                                <Border Padding="16,12">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            FontSize="14"
-                                            Foreground="#1A1A2E"
-                                            Text="Switch Socket 3-Gang" />
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            FontSize="14"
-                                            Foreground="#374151"
-                                            Text="54" />
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            FontSize="14"
-                                            FontWeight="SemiBold"
-                                            Foreground="#1A1A2E"
-                                            Text="$810.00" />
-                                    </Grid>
-                                </Border>
-                            </StackPanel>
+                                                    <TextBlock
+                                                        Grid.Column="2"
+                                                        VerticalAlignment="Center"
+                                                        FontWeight="Bold"
+                                                        Foreground="#3B82F6"
+                                                        TextAlignment="Right">
+                                                        <Run Text="Rs. " />
+                                                        <Run Text="{x:Bind TotalRevenue}" />
+                                                    </TextBlock>
+
+                                                    <TextBlock
+                                                        Grid.Column="3"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind OrderCount}"
+                                                        TextAlignment="Center" />
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsRepeater.ItemTemplate>
+                                </ItemsRepeater>
+                            </ScrollViewer>
                         </Grid>
                     </StackPanel>
                 </Border>
