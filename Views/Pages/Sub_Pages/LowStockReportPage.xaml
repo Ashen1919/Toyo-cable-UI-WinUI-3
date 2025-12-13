@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:Toyo_cable_UI.Views.Pages.Sub_Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Toyo_cable_UI.Models"
     mc:Ignorable="d">
 
     <Grid Background="#F5F7FA" RequestedTheme="Light">
@@ -43,16 +44,10 @@
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
                 Spacing="12">
-                <ComboBox
-                    Width="160"
-                    Header="Status"
-                    PlaceholderText="All State">
-                    <ComboBoxItem Content="All State" IsSelected="True" />
-                    <ComboBoxItem Content="Critical" />
-                    <ComboBoxItem Content="Low Stock" />
-                </ComboBox>
                 <Button
+                    x:Name="GenerateReportButton"
                     Padding="16,8"
+                    Click="GenerateReportButton_Click"
                     Content="Generate Report"
                     CornerRadius="6"
                     Foreground="White"
@@ -102,10 +97,11 @@
                                         Foreground="#6B7280"
                                         Text="CRITICAL" />
                                     <TextBlock
+                                        x:Name="CriticalCountText"
                                         FontSize="24"
                                         FontWeight="Bold"
                                         Foreground="#DC2626"
-                                        Text="12" />
+                                        Text="0" />
                                 </StackPanel>
                             </StackPanel>
                             <TextBlock
@@ -146,10 +142,11 @@
                                         Foreground="#6B7280"
                                         Text="LOW STOCK" />
                                     <TextBlock
+                                        x:Name="LowStockCountText"
                                         FontSize="24"
                                         FontWeight="Bold"
                                         Foreground="#F59E0B"
-                                        Text="28" />
+                                        Text="0" />
                                 </StackPanel>
                             </StackPanel>
                             <TextBlock
@@ -189,10 +186,11 @@
                                         Foreground="#6B7280"
                                         Text="TOTAL ITEMS" />
                                     <TextBlock
+                                        x:Name="TotalItemsCountText"
                                         FontSize="24"
                                         FontWeight="Bold"
                                         Foreground="#3B82F6"
-                                        Text="40" />
+                                        Text="0" />
                                 </StackPanel>
                             </StackPanel>
                             <TextBlock
@@ -219,15 +217,6 @@
                                 FontWeight="SemiBold"
                                 Foreground="#1A1A2E"
                                 Text="Products Requiring Restock" />
-                            <StackPanel
-                                HorizontalAlignment="Right"
-                                Orientation="Horizontal"
-                                Spacing="8">
-                                <TextBox
-                                    Width="250"
-                                    BorderBrush="#E5E7EB"
-                                    PlaceholderText="Search products..." />
-                            </StackPanel>
                         </Grid>
 
                         <Grid>
@@ -244,7 +233,6 @@
                                 CornerRadius="8">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="*" />
@@ -273,331 +261,68 @@
                                         FontSize="13"
                                         FontWeight="SemiBold"
                                         Foreground="#6B7280"
-                                        Text="REORDER LEVEL" />
-                                    <TextBlock
-                                        Grid.Column="4"
-                                        FontSize="13"
-                                        FontWeight="SemiBold"
-                                        Foreground="#6B7280"
                                         Text="STATUS" />
                                 </Grid>
                             </Border>
 
                             <!--  Table Rows  -->
-                            <StackPanel Grid.Row="1" Margin="0,8,0,0">
-                                <!--  Critical Item 1  -->
-                                <Border
-                                    Padding="16,12"
-                                    BorderBrush="#E5E7EB"
-                                    BorderThickness="0,0,0,1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            FontSize="14"
-                                            FontWeight="Medium"
-                                            Foreground="#1A1A2E"
-                                            Text="Cable Wire 2.5mm" />
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            FontSize="14"
-                                            Foreground="#6B7280"
-                                            Text="Cables" />
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            FontSize="14"
-                                            FontWeight="SemiBold"
-                                            Foreground="#DC2626"
-                                            Text="5 units" />
-                                        <TextBlock
-                                            Grid.Column="3"
-                                            FontSize="14"
-                                            Foreground="#6B7280"
-                                            Text="50 units" />
-                                        <Border
-                                            Grid.Column="4"
-                                            Width="80"
-                                            Padding="8,4"
-                                            HorizontalAlignment="Left"
-                                            Background="#FEE2E2"
-                                            CornerRadius="4">
-                                            <TextBlock
-                                                FontSize="12"
-                                                FontWeight="SemiBold"
-                                                Foreground="#DC2626"
-                                                Text="Critical"
-                                                TextAlignment="Center" />
-                                        </Border>
-                                    </Grid>
-                                </Border>
-
-                                <!--  Critical Item 2  -->
-                                <Border
-                                    Padding="16,12"
-                                    BorderBrush="#E5E7EB"
-                                    BorderThickness="0,0,0,1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            FontSize="14"
-                                            FontWeight="Medium"
-                                            Foreground="#1A1A2E"
-                                            Text="Circuit Breaker 20A" />
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            FontSize="14"
-                                            Foreground="#6B7280"
-                                            Text="Switches" />
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            FontSize="14"
-                                            FontWeight="SemiBold"
-                                            Foreground="#DC2626"
-                                            Text="8 units" />
-                                        <TextBlock
-                                            Grid.Column="3"
-                                            FontSize="14"
-                                            Foreground="#6B7280"
-                                            Text="30 units" />
-                                        <Border
-                                            Grid.Column="4"
-                                            Width="80"
-                                            Padding="8,4"
-                                            HorizontalAlignment="Left"
-                                            Background="#FEE2E2"
-                                            CornerRadius="4">
-                                            <TextBlock
-                                                FontSize="12"
-                                                FontWeight="SemiBold"
-                                                Foreground="#DC2626"
-                                                Text="Critical"
-                                                TextAlignment="Center" />
-                                        </Border>
-                                    </Grid>
-                                </Border>
-
-                                <!--  Low Stock Item 1  -->
-                                <Border
-                                    Padding="16,12"
-                                    BorderBrush="#E5E7EB"
-                                    BorderThickness="0,0,0,1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            FontSize="14"
-                                            FontWeight="Medium"
-                                            Foreground="#1A1A2E"
-                                            Text="LED Bulb 9W" />
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            FontSize="14"
-                                            Foreground="#6B7280"
-                                            Text="Bulbs" />
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            FontSize="14"
-                                            FontWeight="SemiBold"
-                                            Foreground="#F59E0B"
-                                            Text="25 units" />
-                                        <TextBlock
-                                            Grid.Column="3"
-                                            FontSize="14"
-                                            Foreground="#6B7280"
-                                            Text="100 units" />
-                                        <Border
-                                            Grid.Column="4"
-                                            Width="80"
-                                            Padding="8,4"
-                                            HorizontalAlignment="Left"
-                                            Background="#FEF3C7"
-                                            CornerRadius="4">
-                                            <TextBlock
-                                                FontSize="12"
-                                                FontWeight="SemiBold"
-                                                Foreground="#F59E0B"
-                                                Text="Low"
-                                                TextAlignment="Center" />
-                                        </Border>
-                                    </Grid>
-                                </Border>
-
-                                <!--  Low Stock Item 2  -->
-                                <Border
-                                    Padding="16,12"
-                                    BorderBrush="#E5E7EB"
-                                    BorderThickness="0,0,0,1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            FontSize="14"
-                                            FontWeight="Medium"
-                                            Foreground="#1A1A2E"
-                                            Text="Power Extension 3m" />
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            FontSize="14"
-                                            Foreground="#6B7280"
-                                            Text="Accessories" />
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            FontSize="14"
-                                            FontWeight="SemiBold"
-                                            Foreground="#F59E0B"
-                                            Text="35 units" />
-                                        <TextBlock
-                                            Grid.Column="3"
-                                            FontSize="14"
-                                            Foreground="#6B7280"
-                                            Text="80 units" />
-                                        <Border
-                                            Grid.Column="4"
-                                            Width="80"
-                                            Padding="8,4"
-                                            HorizontalAlignment="Left"
-                                            Background="#FEF3C7"
-                                            CornerRadius="4">
-                                            <TextBlock
-                                                FontSize="12"
-                                                FontWeight="SemiBold"
-                                                Foreground="#F59E0B"
-                                                Text="Low"
-                                                TextAlignment="Center" />
-                                        </Border>
-                                    </Grid>
-                                </Border>
-
-                                <!--  Low Stock Item 3  -->
-                                <Border
-                                    Padding="16,12"
-                                    BorderBrush="#E5E7EB"
-                                    BorderThickness="0,0,0,1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            FontSize="14"
-                                            FontWeight="Medium"
-                                            Foreground="#1A1A2E"
-                                            Text="Switch Socket 3-Gang" />
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            FontSize="14"
-                                            Foreground="#6B7280"
-                                            Text="Switches" />
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            FontSize="14"
-                                            FontWeight="SemiBold"
-                                            Foreground="#F59E0B"
-                                            Text="42 units" />
-                                        <TextBlock
-                                            Grid.Column="3"
-                                            FontSize="14"
-                                            Foreground="#6B7280"
-                                            Text="75 units" />
-                                        <Border
-                                            Grid.Column="4"
-                                            Width="80"
-                                            Padding="8,4"
-                                            HorizontalAlignment="Left"
-                                            Background="#FEF3C7"
-                                            CornerRadius="4">
-                                            <TextBlock
-                                                FontSize="12"
-                                                FontWeight="SemiBold"
-                                                Foreground="#F59E0B"
-                                                Text="Low"
-                                                TextAlignment="Center" />
-                                        </Border>
-                                    </Grid>
-                                </Border>
-
-                                <!--  Low Stock Item 4  -->
-                                <Border Padding="16,12">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            FontSize="14"
-                                            FontWeight="Medium"
-                                            Foreground="#1A1A2E"
-                                            Text="Cable Wire 1.5mm" />
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            FontSize="14"
-                                            Foreground="#6B7280"
-                                            Text="Cables" />
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            FontSize="14"
-                                            FontWeight="SemiBold"
-                                            Foreground="#F59E0B"
-                                            Text="48 units" />
-                                        <TextBlock
-                                            Grid.Column="3"
-                                            FontSize="14"
-                                            Foreground="#6B7280"
-                                            Text="90 units" />
-                                        <Border
-                                            Grid.Column="4"
-                                            Width="80"
-                                            Padding="8,4"
-                                            HorizontalAlignment="Left"
-                                            Background="#FEF3C7"
-                                            CornerRadius="4">
-                                            <TextBlock
-                                                FontSize="12"
-                                                FontWeight="SemiBold"
-                                                Foreground="#F59E0B"
-                                                Text="Low"
-                                                TextAlignment="Center" />
-                                        </Border>
-                                    </Grid>
-                                </Border>
-                            </StackPanel>
+                            <ScrollViewer
+                                Grid.Row="1"
+                                MaxHeight="500"
+                                Margin="0,8,0,0">
+                                <ItemsRepeater ItemsSource="{x:Bind LowStockProducts, Mode=OneWay}">
+                                    <ItemsRepeater.ItemTemplate>
+                                        <DataTemplate x:DataType="models:LowStockProduct">
+                                            <Border
+                                                Padding="16,12"
+                                                BorderBrush="#E5E7EB"
+                                                BorderThickness="0,0,0,1">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock
+                                                        Grid.Column="0"
+                                                        FontSize="14"
+                                                        FontWeight="Medium"
+                                                        Foreground="#1A1A2E"
+                                                        Text="{x:Bind ProductName}" />
+                                                    <TextBlock
+                                                        Grid.Column="1"
+                                                        FontSize="14"
+                                                        Foreground="#6B7280"
+                                                        Text="{x:Bind CategoryName}" />
+                                                    <TextBlock
+                                                        Grid.Column="2"
+                                                        FontSize="14"
+                                                        FontWeight="SemiBold"
+                                                        Foreground="{x:Bind StockColor}"
+                                                        Text="{x:Bind StockText}" />
+                                                    <Border
+                                                        Grid.Column="3"
+                                                        Width="80"
+                                                        Padding="5"
+                                                        HorizontalAlignment="Left"
+                                                        Background="{x:Bind StockColor}"
+                                                        CornerRadius="6">
+                                                        <TextBlock
+                                                            HorizontalAlignment="Center"
+                                                            FontSize="14"
+                                                            Foreground="White"
+                                                            Text="{x:Bind StockLevelText}" />
+                                                    </Border>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsRepeater.ItemTemplate>
+                                </ItemsRepeater>
+                            </ScrollViewer>
                         </Grid>
                     </StackPanel>
                 </Border>
-
             </StackPanel>
         </ScrollViewer>
     </Grid>
