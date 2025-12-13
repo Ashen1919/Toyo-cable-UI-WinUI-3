@@ -125,6 +125,71 @@ public sealed partial class MonthlyReportPage : Page
         }
     }
 
+    private void MonthListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        var selectedItem = e.ClickedItem as ListViewItem;
+        if (selectedItem != null)
+        {
+            string monthText = selectedItem.Content.ToString();
+            DateTime selectedMonth = ParseMonthFromString(monthText);
+            _selectedMonth = selectedMonth;
+            LoadData(selectedMonth);
+        }
+    }
+
+    private void LoadMonthsButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        var selectedItems = MonthListView.SelectedItems;
+
+        if (selectedItems.Count == 0)
+        {
+            // No selection, show message
+            ContentDialog noSelectionDialog = new ContentDialog
+            {
+                Title = "No Month Selected",
+                Content = "Please select at least one month to load data.",
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot
+            };
+            _ = noSelectionDialog.ShowAsync();
+            return;
+        }
+
+        if (selectedItems.Count == 1)
+        {
+            // Single month selected
+            var selectedItem = selectedItems[0] as ListViewItem;
+            string monthText = selectedItem.Content.ToString();
+            DateTime selectedMonth = ParseMonthFromString(monthText);
+            _selectedMonth = selectedMonth;
+            LoadData(selectedMonth);
+        }
+        else
+        {
+            // Multiple months selected - load first one for now
+            // You can enhance this to show combined data
+            var firstItem = selectedItems[0] as ListViewItem;
+            string monthText = firstItem.Content.ToString();
+            DateTime selectedMonth = ParseMonthFromString(monthText);
+            _selectedMonth = selectedMonth;
+            LoadData(selectedMonth);
+        }
+    }
+
+    private DateTime ParseMonthFromString(string monthString)
+    {
+        try
+        {
+            // Parse "January 2025" format
+            return DateTime.ParseExact(monthString, "MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture);
+        }
+        catch
+        {
+            // Return current month if parsing fails
+            return DateTime.Now;
+        }
+    }
+
     // Calculate monthly sales by product
     private List<DailySalesData> CalculateMonthlySales(List<Order> orders)
     {
